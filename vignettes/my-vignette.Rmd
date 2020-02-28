@@ -1,0 +1,33 @@
+---
+title: "Index of Suspicion"
+Author: Yoonsu Cho
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{my-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Insturments associated with other phenotypes than the exposure lead MR estimate being biased (horizontal pleiotropy). This package is designed to predict which instruments are likely to be problematic due to pleiotropy and downweight them to be used in MR. 
+
+
+# Plans
+
+* Defining IOS
+* Write functions for 
+  * Generating background dataset
+  * Performing MR using IOS as weight
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+--------
+
+```r setup
+library(mr.ios)
+```

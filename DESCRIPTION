@@ -1,0 +1,24 @@
+Package: mr.ios
+Title: Index of Suspicion 
+Version: 0.1.0
+Authors@R: c(person("Gibran", "Hemani", email = "g.hemani@bristol.ac.uk", role = c("aut", "cre")), person("Yoonsu", "Cho", email = "yoonsu.cho@bristol.ac.uk", role = c("aut")))
+Description: Insturments associated with other phenotypes than the exposure lead MR estimate being biased (horizontal pleiotropy). This package is designed to predict which instruments are likely to be problematic due to pleiotropy and downweight them to be used in MR. 
+Depends: R (>= 3.6.0), 
+         TwoSampleMR, 
+         dplyr,
+         RadialMR,
+         magrittr,
+         tidyr,
+         ggplot2,
+         glmnet,
+         ggrepel
+Suggests: 
+    igraph,
+    testthat,
+    knitr,
+    rmarkdown
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.0.2
+VignetteBuilder: knitr
