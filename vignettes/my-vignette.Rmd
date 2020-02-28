@@ -11,13 +11,42 @@ vignette: >
 Insturments associated with other phenotypes than the exposure lead MR estimate being biased (horizontal pleiotropy). This package is designed to predict which instruments are likely to be problematic due to pleiotropy and downweight them to be used in MR. 
 
 
+# IOS
+Suppose we estimate the effect of X on Y. X is instrumented by genetic variants, which are likely to be associated with other phenotypes. We can use external data to predict which instrument are the most pleiotropic to down weight them. 
+ 1. Make score for every SNP to see how likely it is to be pleiotropic.
+ 2. Perform MR accounting for pleiotropy using IOS (e.g. higher IOS = lower weight) 
+
+* Two basic approaches to estimate IOS
+	- ios1: A summary of the SNP r2 with the other traits (r2_gu)
+	- ios2: A summary of the ratio of r2_gu / r2_gx, where r2_gx is the variance explained by the SNP on the exposure. Estimates the index of suspicion, whereupon SNPs which have a larger effect on a set of traits given their effect on the exposure are deemed more suspicious
+
+# Main question
+ 1. Does IOS correlate with Qj in model 1?
+ 2. Does Q reduce in model 2 compared to model 1?
+ 3. How different are casual estimates (bxy) in model 1 and model 2?
+ 4. How much does SE change (i.e. does power improve in model 2)?
+
+
 # Plans
 
-* Defining IOS
-* Write functions for 
-  * Generating background dataset
-  * Performing MR using IOS as weight
+1. Defining IOS
 
+2. Write functions for 
+  * Generating background dataset
+	* Set a range of available data (id list)
+  * MR analysis considering IOS: IOS will be taken account into the MR model. The variants with higher IOS scores will be down-weighted.
+	* Intergrate IOS with Radial MR for weighting and MR
+
+3. Apply the functions to empirical analysis to answer the main questions
+  * The following phenotypes will be used as examples:
+	* SBP - CHD
+	* Urate (new summary stats available) - eGFR
+	* CRP (new summary stats available) - CHD 
+
+
+
+
+--------
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -26,8 +55,32 @@ knitr::opts_chunk$set(
 )
 ```
 
+
 --------
+
 
 ```r setup
 library(mr.ios)
+
+# choose exposure
+id_exp <- ""
+exp_dat <- extract_instruments(id_exp)
+
+# choose outcome
+id_out <- ""
+out_dat <- extract_outcome_data(exp_dat$SNP, id_out)
+
+# choose background dataset list
+id_bg <- background_ids(id_exp=id_exp, id_out=id_out, type=c("default", "advanced")[1])
+
+# make background dataset
+bg_dat <- make_background(snplist = exp_dat$SNP, id_bg = id_bg)
+
+# generate ios
+ios_dat <- ios(exp_dat=exp_dat, bg_dat=bg_dat)
+
+# perform mr
+dat <- harmonise_data(exp_dat, out_dat)
+mr_res <- mr.ios(harmonised_dat=dat, ios_dat=ios_dat) 
+
 ```
