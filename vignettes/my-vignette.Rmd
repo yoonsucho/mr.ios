@@ -47,6 +47,14 @@ Suppose we estimate the effect of X on Y. X is instrumented by genetic variants,
 
 
 --------
+# Plans
+
+* Defining IOS
+* Write functions for 
+  * Generating background dataset
+  * Performing MR using IOS as weight
+
+
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -54,7 +62,6 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
-
 
 --------
 
@@ -84,3 +91,6 @@ dat <- harmonise_data(exp_dat, out_dat)
 mr_res <- mr.ios(harmonised_dat=dat, ios_dat=ios_dat) 
 
 ```
+--------
+
+

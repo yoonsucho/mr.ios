@@ -111,4 +111,4 @@ mr.ios <-function(ios = ios_dat, dat=dat, r_input,alpha,weights,tol, ios = c("io
   return(rares)
   
 }
-  
+
