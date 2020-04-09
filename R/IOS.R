@@ -63,40 +63,127 @@ background_ids <- function(id_exp=id_exp, id_out=id_out, type=c("default", "adva
 
 # make background dataset
 #bg_dat <- make_background(snplist = exp_dat$SNP, id_bg = id_bg)
-make_background <- function(snplist= exp_dat$SNP, id_bg = id_bg) {
+make_background <- function(exp = exp_dat, id_bg = id_bg) {
+  snplist <- exp$SNP
+  
   bdat <- TwoSampleMR::extract_outcome_data(snps = snplist, outcomes = id_bg)
   
-  info <- ieugwasr::gwasinfo(unique(bg_dat$id.outcome, exp_dat$id.exposure[1]))
+  #call the IEU GWAS database to look up the information about "sd", "category" and "unit"
+  ao <- TwoSampleMR::available_outcomes()
+  info <- ieugwasr::gwasinfo(unique(c(bdat$id.outcome, exp_dat$id.exposure[1])))
   
+  #Add columns of "category", "unit" and "SD" to the background data frame
+  ##category
   bdat$category[bdat$id.outcome %in% info$id] <- info$category[info$id %in% bdat$id.outcome]
+  ##unit
   bdat$unit[bdat$id.outcome %in% info$id] <- info$unit[info$id %in% bdat$id.outcome]
+  ##SD
+  bdat$sd.outcome <- NA
   
-  ao <- available_outcomes()
+  #for continuous outcome
+  #if(! (bdat$category %in% c('Disease','Binary'))){
+  #    for(i in 1:nrow(bdat)){
+  #      bdat$sd.outcome[bdat$id.outcome[i] %in% ao$id[i]] <- ao$sd[i]
+  #    }
+  #}
   
-  if (! bdat$category == "Disease" || ! bdat$unit == "log odds")){
-   for (i in 1:nrow(bg_dat)){
-     if(bdat$unit == "SD"){
-     bdat$sd.outcome <- 1
-     } else if { 
-       bdat$sd.outcome[bdat$id.outcome %in% ao$id] <- ao$sd[ao$id %in% bdat$id.outcome]
-     }
-    }
-  }
-  #caculate R2 reference- ieugwasr::gwasinfo(idlist)
+  bdat <-
+    bdat %>% 
+    mutate(sd.outcome = ifelse(category %in% c("Risk factor", "Continuous", "Categorical Ordered", "Metabolites") & 
+                                unit == "SD", 
+                              1, 
+                             ifelse(category %in% c("Disease", "Binary") &
+                                      unit == "SD",
+                                    1,
+                                    ifelse(category %in% c("Risk factor", "Continuous") &
+                                             !unit == "SD",
+                                           ao$sd[ao$id %in% bdat$id.outcome],
+                                           ifelse(category %in% c("Disease", "Binary") &
+                                                    !unit == "SD",
+                                                  ao$sd[ao$id %in% bdat$id.outcome], NA
+                                           )))))
+  ##ncase
+  bdat$ncase[bdat$id.outcome %in% info$id] <- info$ncase[info$id %in% bdat$id.outcome]
+  ##ncontrol
+  bdat$ncontrol[bdat$id.outcome %in% info$id] <- info$ncontrol[info$id %in% bdat$id.outcome]
+  
+  
+  #Add columns of "category", "unit" and "SD" to the exposure data frame
+  ##category
+  exp$category[exp$id.exposure%in% info$id] <- info$category[info$id %in% exp$id.exposure]
+  ##unit
+  exp$unit[exp$id.exposure %in% info$id] <- info$unit[info$id %in% exp$id.exposure]
+  ##SD
+  exp$sd.exposure <- NA
+  exp <-
+    exp %>% 
+    mutate(sd.exposure = ifelse(category %in% c("Risk factor", "Continuous", "Categorical Ordered", "Metabolites") & 
+                                 unit == "SD", 
+                               1, 
+                               ifelse(category %in% c("Disease", "Binary") &
+                                        unit == "SD",
+                                      1,
+                                      ifelse(category %in% c("Risk factor", "Continuous") &
+                                               !unit == "SD",
+                                             ao$sd[ao$id %in% exp$id.exposure],
+                                             ifelse(category %in% c("Disease", "Binary") &
+                                                      !unit == "SD",
+                                                    ao$sd[ao$id %in% exp$id.exposure], NA
+                                             )))))
+  ##ncase
+  exp$ncase[exp$id.exposure %in% info$id] <- info$ncase[info$id %in% exp$id.exposure]
+  ##ncontrol
+  exp$ncontrol[exp$id.exposure %in% info$id] <- info$ncontrol[info$id %in% exp$id.exposure]
+  
+    
+    
+  #Calculate variance explained by the candidiate traits 
+  bdat <-
+    bdat %>% 
+    mutate(vgu1 = ifelse(category %in% c("Risk factor", "Continuous", "Categorical Ordered", "Metabolites"),
+                         TwoSampleMR::get_r_from_pn(bdat$pval.outcome, bdat$samplesize.outcome), 
+                         ifelse(category %in% c("Disease", "Binary"),
+                                TwoSampleMR::get_r_from_lor(bdat$beta.outcome, bdat$eaf.outcome, bdat$ncase, bdat$ncontrol, 0.1, model = "logit", correction = F), 
+                                NA))) %>%
+    mutate(vgu2 = ifelse(category %in% c("Risk factor", "Continuous", "Categorical Ordered", "Metabolites"),
+                         bdat$beta.outcome^2 * 2 * bdat$eaf.outcome * (1 - bdat$eaf.outcome) / bdat$sd.outcome, 
+                         ifelse(category %in% c("Disease", "Binary"),
+                                TwoSampleMR::get_r_from_lor(bdat$beta.outcome, bdat$eaf.outcome, bdat$ncase, bdat$ncontrol, 0.1, model = "logit", correction = F), 
+                                NA)))  
+    
+  #Calculate variance explained by the original exposure
+  exp <-
+    exp %>% 
+    mutate(vgx1 = ifelse(category %in% c("Risk factor", "Continuous", "Categorical Ordered", "Metabolites"),
+                         TwoSampleMR::get_r_from_pn(exp$pval.exposure, exp$samplesize.exposure), 
+                         ifelse(category %in% c("Disease", "Binary") &
+                                  is.na(exp$ncase) &
+                                  is.na(exp$ncontrol),
+                                TwoSampleMR::get_r_from_lor(exp$beta.exposure, exp$eaf.exposure, exp$ncase, exp$ncontrol, 0.1, model = "logit", correction = F), 
+                                NA))) %>%
+    mutate(vgx2 = ifelse(category %in% c("Risk factor", "Continuous", "Categorical Ordered", "Metabolites"),
+                         exp$beta.exposure^2 * 2 * exp$eaf.exposure * (1 - exp$eaf.exposure) / exp$sd.exposure, 
+                         ifelse(category %in% c("Disease", "Binary")&
+                                  is.na(exp$ncase) &
+                                  is.na(exp$ncontrol),
+                                TwoSampleMR::get_r_from_lor(exp$beta.exposure, exp$eaf.exposure, exp$ncase, exp$ncontrol, 0.1, model = "logit", correction = F), 
+                                NA)))  
+  
+  bg_dat <- merge(bg_dat, subset(exp_dat, select=c(SNP, vgx1, vgx2)), by="SNP")
+  bg_dat$r2_ratio <- bg_dat$vgu / bg_dat$vgx
   
   return(bdat)
 
 }
+
+
+
 
 # generate ios
 #ios_dat <- ios(exp_dat=exp_dat, bg_dat=bg_dat)
 ios <- function(exp_dat=exp_dat, bg_dat=bg_dat){
   require(dplyr)
   require(reshape2)
-  bg_dat$vgu <- bg_dat$beta.outcome^2 * 2 * bg_dat$eaf.outcome * (1 - bg_dat$eaf.outcome)
-  exp_dat$vgx <- exp_dat$beta.exposure^2 * 2 * exp_dat$eaf.exposure * (1 - exp_dat$eaf.exposure)
-  bg_dat <- merge(bg_dat, subset(exp_dat, select=c(SNP, vgx)), by="SNP")
-  bg_dat$r2_ratio <- bg_dat$vgu / bg_dat$vgx
   ios <- dplyr::group_by(bg_dat, SNP) %>%
     dplyr::summarise(
       ios1_mean = sum(vgu, na.rm=TRUE), #sum or mean
