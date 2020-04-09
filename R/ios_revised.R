@@ -15,11 +15,8 @@ ios <- function(exp_dat=exp_dat, bg_dat=bg_dat)
     bg_dat$vgu2 <- bg_dat$beta.outcome^2 * 2 * bg_dat$eaf.outcome * (1 - bg_dat$eaf.outcome) / bg_dat$sd.outcome
     
     #Calculate variance explained by the original exposure
-    exp_dat$vgx <- exp_dat$beta.exposure^2 * 2 * exp_dat$eaf.exposure * (1 - exp_dat$eaf.exposure) / exp_dat$sd.exposure
-    
-}
+    exp_dat$vgx <- exp_dat$beta.exposure^2 * 2 * exp_dat$eaf.exposure * (1 - exp_dat$eaf.exposure) / exp_dat$sd.exposur
 
-TwoSampleMR::get_r_from_lor
 
   
   bg_dat <- merge(bg_dat, subset(exp_dat, select=c(SNP, vgx)), by="SNP")

@@ -47,6 +47,7 @@ Suppose we estimate the effect of X on Y. X is instrumented by genetic variants,
 
 
 --------
+
 # Plans
 
 * Defining IOS
@@ -92,5 +93,3 @@ mr_res <- mr.ios(harmonised_dat=dat, ios_dat=ios_dat)
 
 ```
 --------
-
-

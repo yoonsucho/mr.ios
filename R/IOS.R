@@ -66,8 +66,7 @@ make_background <- function(snplist= exp_dat$SNP, id_bg = id_bg) {
 
 # generate ios
 #ios_dat <- ios(exp_dat=exp_dat, bg_dat=bg_dat)
-ios <- function(exp_dat=exp_dat, bg_dat=bg_dat)
-{
+ios <- function(exp_dat=exp_dat, bg_dat=bg_dat){
   require(dplyr)
   require(reshape2)
   bg_dat$vgu <- bg_dat$beta.outcome^2 * 2 * bg_dat$eaf.outcome * (1 - bg_dat$eaf.outcome)
@@ -89,7 +88,7 @@ ios <- function(exp_dat=exp_dat, bg_dat=bg_dat)
       ios2_95 = quantile(r2_ratio, 0.95, na.rm=TRUE),
       ios2_max = max(r2_ratio, na.rm=TRUE)
     ) %>% melt
-  
+
   # Reshape IOS
   temp <- reshape(ios, timevar="variable", idvar="SNP", direction="wide")
   names(temp)[-1] <- as.character(unique(ios$variable))
@@ -103,7 +102,7 @@ ios <- function(exp_dat=exp_dat, bg_dat=bg_dat)
 #dat <- harmonise_data(exp_dat, out_dat)
 #mr_res <- mr.ios(dat=dat, ios=ios_dat)
 
-mr.ios <-function(ios = ios_dat, dat=dat, r_input,alpha,weights,tol, ios = c("ios1", "ios2")[1]){
+mr.ios <-function(ios = ios_dat, dat=dat, r_input,alpha,weights,tol){
  
   radat <- format_radial(ios = ios_dat, dat$beta.exposure, dat$beta.outcome, dat$se.exposure, dat$se.outcome, dat$SNP)
   rares <- RadialMR::ivw_radial()
@@ -111,4 +110,3 @@ mr.ios <-function(ios = ios_dat, dat=dat, r_input,alpha,weights,tol, ios = c("io
   return(rares)
   
 }
-
