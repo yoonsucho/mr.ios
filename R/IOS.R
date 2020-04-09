@@ -37,7 +37,10 @@ background_ids <- function(id_exp=id_exp, id_out=id_out, type=c("default", "adva
       filter(!duplicated(trait), mr == 1) %>%
       filter(grepl("ukb-b", id)) %>%
       filter(! id %in% c(id_exp, id_out))
+    
+    ids <- subset(ids, category == "NA" & unit == "NA")
     id_list <- ids$id 
+    
     message("Using default list of ", nrow(ids), " traits")
   }
   
@@ -47,17 +50,38 @@ background_ids <- function(id_exp=id_exp, id_out=id_out, type=c("default", "adva
       filter(!duplicated(trait), mr == 1) %>%
       filter(!grepl("ukb-a", id)) %>%
       filter(! id %in% c(id_exp, id_out))
+    
+    ids <- subset(ids, category == "NA" & unit == "NA")
     id_list <- ids$id 
+    
     message("Using default list of ", nrow(ids), " traits")
   }
+
   return(id_list)
-}
+
+  }
 
 # make background dataset
 #bg_dat <- make_background(snplist = exp_dat$SNP, id_bg = id_bg)
 make_background <- function(snplist= exp_dat$SNP, id_bg = id_bg) {
   bdat <- TwoSampleMR::extract_outcome_data(snps = snplist, outcomes = id_bg)
   
+  info <- ieugwasr::gwasinfo(unique(bg_dat$id.outcome, exp_dat$id.exposure[1]))
+  
+  bdat$category[bdat$id.outcome %in% info$id] <- info$category[info$id %in% bdat$id.outcome]
+  bdat$unit[bdat$id.outcome %in% info$id] <- info$unit[info$id %in% bdat$id.outcome]
+  
+  ao <- available_outcomes()
+  
+  if (! bdat$category == "Disease" || ! bdat$unit == "log odds")){
+   for (i in 1:nrow(bg_dat)){
+     if(bdat$unit == "SD"){
+     bdat$sd.outcome <- 1
+     } else if { 
+       bdat$sd.outcome[bdat$id.outcome %in% ao$id] <- ao$sd[ao$id %in% bdat$id.outcome]
+     }
+    }
+  }
   #caculate R2 reference- ieugwasr::gwasinfo(idlist)
   
   return(bdat)
