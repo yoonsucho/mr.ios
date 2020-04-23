@@ -17,3 +17,7 @@ Data.frame
 \description{
 Calculate IOS across based on R squared multiple traits and summarising estimates using mean, sd, iqr, median, 95% value, maximum value
 }
+\examples{
+ios(exp=exp_dat, bg=bg_dat)
+
+}
