@@ -11,6 +11,6 @@
 #' 
 #'
 #' @name mr.ios-package
-#' @aliases TwoSampleMR twosamplemr
+#' @aliases mr.ios
 #' @docType package
 NULL

@@ -3,8 +3,7 @@
 \docType{package}
 \name{mr.ios-package}
 \alias{mr.ios-package}
-\alias{TwoSampleMR}
-\alias{twosamplemr}
+\alias{mr.ios}
 \title{MR.IOS:: Calculate index of suspicion}
 \description{
 A package for sensitivity analysis in two-samle Mendelian randomization setting when horizontal pleiotropy exists. 

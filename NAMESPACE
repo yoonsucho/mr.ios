@@ -2,3 +2,4 @@
 
 export(background_ids)
 export(ios)
+export(make_background)
