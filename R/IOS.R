@@ -6,9 +6,10 @@
 #' 
 #' If a SNP influences multiple other traits then it could be 'suspicious', and more likely to be pleiotropic. This function implements two basic approaches to estimate IOS
 #'
-#' - ios1: A summary of the SNP r2 with the other traits (r2_gu).
-#' - ios2: A summary of the ratio of r2_gu / r2_gx, where r2_gx is the variance explained by the SNP on the exposure. Estimates the index of suspicion, whereupon SNPs which have a larger effect on a set of traits given their effect on the exposure are deemed more suspicious.
-#' 
+#' \itemize{
+#' \item ios1: A summary of the SNP r2 with the other traits (r2_gu).
+#' \item ios2: A summary of the ratio of r2_gu / r2_gx, where r2_gx is the variance explained by the SNP on the exposure. Estimates the index of suspicion, whereupon SNPs which have a larger effect on a set of traits given their effect on the exposure are deemed more suspicious.
+#' }
 #'
 #' @name mr.ios-package
 #' @aliases mr.ios
