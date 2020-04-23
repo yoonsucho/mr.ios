@@ -24,7 +24,7 @@ background_ids <- function(id_exp=id_exp, id_out=id_out, type=c("default", "adva
       arrange(desc(sample_size)) %>%
       filter(nsnp > 100000) %>%
       filter(!duplicated(trait), mr == 1) %>%
-      filter(grepl("ukb-b|ieu-a", id)) %>%
+      filter(grepl("ukb-b|ieu-a|ebi-a", id)) %>%
       filter(! id %in% c(id_exp, id_out))
     
     ids <- subset(ids, !(category == "NA" & unit == "NA"))
@@ -88,8 +88,8 @@ make_background <- function(exp = exp_dat, id_bg = id_bg) {
     return(dat)
   }
   
-  bdat <- remove_na_dat(bdat, "outcome")
-  exp <- remove_na_dat(exp, "exposure")
+  #bdat <- remove_na_dat(bdat, "outcome")
+  #exp <- remove_na_dat(exp, "exposure")
   
   #-----------------------------------------------------------------------------------------------------
   #Caculate R square

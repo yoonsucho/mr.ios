@@ -15,12 +15,12 @@ ios <- function(exp=exp_dat, bg=bg_dat){
   require(reshape2)
   ios <- dplyr::group_by(bg, SNP) %>%
     dplyr::summarise(
-      ios1_mean = sum(vgu, na.rm=TRUE), #sum or mean
-      ios1_sd = sd(vgu, na.rm=TRUE),
-      ios1_iqr = quantile(vgu, 0.75, na.rm=TRUE) - quantile(vgu, 0.25, na.rm=TRUE),
-      ios1_median = median(vgu, na.rm=TRUE),
-      ios1_95 = quantile(vgu, 0.95, na.rm=TRUE),
-      ios1_max = max(vgu, na.rm=TRUE),
+      ios1_mean = sum(rsq.outcome, na.rm=TRUE), #sum or mean
+      ios1_sd = sd(rsq.outcome, na.rm=TRUE),
+      ios1_iqr = quantile(rsq.outcome, 0.75, na.rm=TRUE) - quantile(rsq.outcome, 0.25, na.rm=TRUE),
+      ios1_median = median(rsq.outcome, na.rm=TRUE),
+      ios1_95 = quantile(rsq.outcome, 0.95, na.rm=TRUE),
+      ios1_max = max(rsq.outcome, na.rm=TRUE),
       ios2_mean = sum(r2_ratio, na.rm=TRUE),
       ios2_sd = sd(r2_ratio, na.rm=TRUE),
       ios2_iqr = quantile(r2_ratio, 0.75, na.rm=TRUE) - quantile(r2_ratio, 0.25, na.rm=TRUE),
