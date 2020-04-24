@@ -11,7 +11,8 @@ Depends: R (>= 3.6.0),
          tidyr,
          ggplot2,
          glmnet,
-         ggrepel
+         ggrepel,
+         reshape2
 Suggests: 
     igraph,
     testthat,

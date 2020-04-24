@@ -9,8 +9,7 @@ make_background(exp = exp_dat, id_bg = id_bg)
 \arguments{
 \item{exp}{Dataset of the instruments for the exposure, obtained using \code{extract_instruments}}
 
-\item{id_bg}{List obtained using \code{background_ids}
-make_background(exp = exp_dat, id_bg = id_bg)}
+\item{id_bg}{List obtained using \code{background_ids}}
 }
 \value{
 Data frame

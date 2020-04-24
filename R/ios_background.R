@@ -10,8 +10,6 @@
 #'   \item advanced: In addition to the default list, it returns list of IDs of GWAS summary data on protein, metabolite, and eQTL levels, as well as GWAS summary statistics imported from the EBI database.
 #' }
 #' 
-#' @examples 
-#' background_ids(id_exp=id_exp, id_out=id_out, type="default")
 #' 
 #' @export
 #' @return List
@@ -59,8 +57,7 @@ background_ids <- function(id_exp=id_exp, id_out=id_out, type=c("default", "adva
 #' 
 #' @param exp Dataset of the instruments for the exposure, obtained using \code{extract_instruments}
 #' @param id_bg List obtained using \code{background_ids}
-
-#' make_background(exp = exp_dat, id_bg = id_bg)
+#'
 #'
 #' @export
 #' @return Data frame

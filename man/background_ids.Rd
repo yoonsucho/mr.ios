@@ -27,7 +27,3 @@ List
 \description{
 Returns list of IDs of available GWAS summary statistics. The data is obtained from [IEU GWAS database](https://gwas.mrcieu.ac.uk/).
 }
-\examples{
-background_ids(id_exp=id_exp, id_out=id_out, type="default")
-
-}
