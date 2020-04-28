@@ -11,6 +11,7 @@
 
 # calculate ios
 ios <- function(exp=exp_dat, bg=bg_dat){
+  requireNamespace(reshape2)
   ios <- dplyr::group_by(bg, SNP) %>%
     dplyr::summarise(
       ios1_mean = sum(rsq.outcome, na.rm=TRUE), #sum or mean
@@ -25,7 +26,7 @@ ios <- function(exp=exp_dat, bg=bg_dat){
       ios2_median = median(r2_ratio, na.rm=TRUE),
       ios2_95 = quantile(r2_ratio, 0.95, na.rm=TRUE),
       ios2_max = max(r2_ratio, na.rm=TRUE)
-    ) %>% reshape2::melt
+    ) %>% melt
   
   # Reshape IOS
   temp <- stats::reshape(ios, timevar="variable", idvar="SNP", direction="wide")
