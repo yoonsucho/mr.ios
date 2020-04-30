@@ -60,7 +60,7 @@ mr.ios <-function(dat=dat, ios = ios, alpha = 0.05, weights, tol = 0.0001){
   
   weights <- weights + 3
   dat_rmr <- RadialMR::format_radial(dat$beta.exposure, dat$beta.outcome, dat$se.exposure, dat$se.outcome, dat$SNP, ios$ios1_mean, ios$SNP)
-  rares <- RadialMR::ivw_radial(dat_rmr, 0.05, alpha, weights, tol, external_weight = TRUE)
+  rares <- RadialMR::ivw_radial(dat_rmr, alpha, weights, tol, external_weight = TRUE)
   
   return(rares)
   
