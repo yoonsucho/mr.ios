@@ -11,7 +11,6 @@
 
 # calculate ios
 ios <- function(exp=exp_dat, bg=bg_dat){
-  requireNamespace("reshape2", quietly = TRUE)
   ios <- dplyr::group_by(bg, SNP) %>%
     dplyr::summarise(
       ios1_mean = sum(rsq.outcome, na.rm=TRUE), #sum or mean
@@ -26,13 +25,13 @@ ios <- function(exp=exp_dat, bg=bg_dat){
       ios2_median = median(r2_ratio, na.rm=TRUE),
       ios2_95 = quantile(r2_ratio, 0.95, na.rm=TRUE),
       ios2_max = max(r2_ratio, na.rm=TRUE)
-    ) %>% melt
+    )
   
   # Reshape IOS
-  temp <- stats::reshape(ios, timevar="variable", idvar="SNP", direction="wide")
-  names(temp)[-1] <- as.character(unique(ios$variable))
+  #temp <- stats::reshape(ios, timevar="variable", idvar="SNP", direction="wide")
+  #names(temp)[-1] <- as.character(unique(ios$variable))
   
-  return(temp)
+  return(ios)
 }
 
 
@@ -58,7 +57,8 @@ ios <- function(exp=exp_dat, bg=bg_dat){
 
 mr.ios <-function(dat=dat, ios = ios, alpha = 0.05, weights, tol = 0.0001){
   
-  weights <- weights + 3
+  #weights <- weights + 3
+  #warning message if there is no weights / if it is not correct method
   dat_rmr <- RadialMR::format_radial(dat$beta.exposure, dat$beta.outcome, dat$se.exposure, dat$se.outcome, dat$SNP, ios$ios1_mean, ios$SNP)
   rares <- RadialMR::ivw_radial(dat_rmr, alpha, weights, tol, external_weight = TRUE)
   
