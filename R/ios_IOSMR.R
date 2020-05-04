@@ -65,3 +65,10 @@ mr.ios <-function(dat=dat, ios = ios, alpha = 0.05, weights, tol = 0.0001){
   return(rares)
   
 }
+
+
+mr.ios_type <-function(dat=dat, ios = ios_dat, ios_type="ios1_mean", alpha = 0.05, weights, tol = 0.0001){
+  dat_rmr <- RadialMR::format_radial(dat$beta.exposure, dat$beta.outcome, dat$se.exposure, dat$se.outcome, dat$SNP, ios[[ios_type]], ios$SNP)
+  rares <- RadialMR::ivw_radial(dat_rmr, alpha, weights, tol, external_weight = TRUE)
+  return(rares)
+}
