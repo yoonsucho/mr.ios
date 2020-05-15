@@ -129,6 +129,7 @@ make_background <- function(exp = exp_dat, id_bg = id_bg) {
   #Generate background dataset which includes phenotypes associated with outliers (suspicious SNPs).
   snplist <- exp$SNP
   bdat <- TwoSampleMR::extract_outcome_data(snps = snplist, outcomes = id_bg)
+  #bdat <- extract_phewas(id_exp = id_exp, id_out = id_out, exp = exp_dat, id_bg = id_bg)
   
   
   #Retrive info of "sample_size", "ncase", "ncontrol", "unit", "sd" (category?) from IEU GWAS database
