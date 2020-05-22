@@ -57,7 +57,7 @@ Suppose we estimate the effect of X on Y. X is instrumented by genetic variants,
 
 
 
-```{r, include = FALSE}
+```{r, include = FALSE, message=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -66,30 +66,29 @@ knitr::opts_chunk$set(
 
 --------
 
+# Example
+BMI and CHD
 
-```r setup
-library(mr.ios)
-
-# choose exposure
-id_exp <- ""
+```{r}
+# choose exposure - BMI
+id_exp <- "ieu-a-2"
 exp_dat <- extract_instruments(id_exp)
 
-# choose outcome
-id_out <- ""
+# choose outcome - CHD
+id_out <- "ieu-a-7"
 out_dat <- extract_outcome_data(exp_dat$SNP, id_out)
 
 # choose background dataset list
-id_bg <- background_ids(id_exp=id_exp, id_out=id_out, type=c("default", "advanced")[1])
+id_bg <- background_ids(id_exp=id_exp, id_out=id_out, type="general")
 
 # make background dataset
-bg_dat <- make_background(snplist = exp_dat$SNP, id_bg = id_bg)
+bg_dat <- make_background(exp = exp_dat, id_bg = id_bg)
 
 # generate ios
-ios_dat <- ios(exp_dat=exp_dat, bg_dat=bg_dat)
+ios_dat <- ios(exp=exp_dat, bg=bg_dat)
 
 # perform mr
 dat <- harmonise_data(exp_dat, out_dat)
-mr_res <- mr.ios(harmonised_dat=dat, ios_dat=ios_dat) 
-
+mr_res <- mr.ios(dat=dat, ios = ios_dat, alpha = 0.05, 1, tol = 0.0001) 
 ```
 --------
