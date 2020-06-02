@@ -67,9 +67,16 @@ knitr::opts_chunk$set(
 --------
 
 # Example
-BMI and CHD
 
+Call the packages
 ```{r}
+library(TwoSampleMR)
+library(RadialMR)
+library(mr.ios)
+```
+
+## BMI and CHD
+```r
 # choose exposure - BMI
 id_exp <- "ieu-a-2"
 exp_dat <- extract_instruments(id_exp)

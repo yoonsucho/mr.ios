@@ -139,21 +139,21 @@ make_background <- function(exp = exp_dat, id_bg = id_bg) {
   
   #-----------------------------------------------------------------------------------------------------
   #Data cleaning:: Remove rows if both of units and sd are missing to calculate R squared
-  remove_na_dat <- function(dat = dat, what = "outcome"){
-    if(length(unique(dat[[paste0("units.", what)]])) >= 1)
-    {
-      dat <- subset(dat, !(dat[[paste0("units.", what)]] == "NA") |!is.na(dat[[paste0("sd.", what)]]))
-    }
-    return(dat)
-  }
+  #remove_na_dat <- function(dat = dat, what = "outcome"){
+  #  if(length(unique(dat[[paste0("units.", what)]])) >= 1)
+  #  {
+  #    dat <- subset(dat, !(dat[[paste0("units.", what)]] == "NA") |!is.na(dat[[paste0("sd.", what)]]))
+  #  }
+  #  return(dat)
+  # }
   
   #bdat <- remove_na_dat(bdat, "outcome")
   #exp <- remove_na_dat(exp, "exposure")
   
   #-----------------------------------------------------------------------------------------------------
   #Caculate R square
-  bdat <- add_rsq(bdat)
-  exp <- add_rsq(exp)
+  bdat <- suppressMessages(TwoSampleMR::add_rsq(bdat))
+  exp <- suppressMessages(TwoSampleMR::add_rsq(exp))
   
   #-----------------------------------------------------------------------------------------------------
   #Merge two datasets - exposure data and background data
