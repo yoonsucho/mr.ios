@@ -1,3 +1,15 @@
+#'Extract information from IEU GWAS database
+#'
+#'Returns traits which will be used in making background dataset. The data is obtained from [IEU GWAS database](https://gwas.mrcieu.ac.uk/).
+#' 
+#' @param snplist A list of instrumental genetic variants for the exposure.
+#' @param id_bg A list of available GWAS summary statistics.
+#' @param nsnp_per_chunk Number of SNPs to be used per phewas scanning.
+#' 
+#' 
+#' @export
+#' @return Data frame
+
 extract_phewas <- function(snplist = NULL, id_bg = id_bg, nsnp_per_chunk = 30){
   
   batchlist <- sapply(strsplit(id_bg, "-"), function(x) paste(x[1], x[2], sep="-"))
