@@ -14,6 +14,7 @@ extract_phewas <- function(snplist = NULL, id_bg = id_bg, nsnp_per_chunk = 30){
   
   batchlist <- sapply(strsplit(id_bg, "-"), function(x) paste(x[1], x[2], sep="-"))
   
+  n = length(snplist)
   nsplit <- rep(1:(ceiling(n/nsnp_per_chunk)), each = nsnp_per_chunk)[1:n]
   snplist_split <- split(snplist, nsplit)
   splits <- data.frame(snps = snplist, chunk_id=nsplit)
