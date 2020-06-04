@@ -14,17 +14,14 @@ extract_phewas <- function(snplist = NULL, id_bg = id_bg, nsnp_per_chunk = 30){
   
   batchlist <- sapply(strsplit(id_bg, "-"), function(x) paste(x[1], x[2], sep="-"))
   
-  n <- length(snplist)
-  nsplit <- round(length(snplist) / nsnp_per_chunk)
-  snplist_split <- split(snplist, 1:nsplit)
-  
-  splits <- data.frame(snps = snplist, chunk_id=rep(1:(ceiling(nsplit)), each=nsnp_per_chunk)[1:n])
-
+  nsplit <- rep(1:(ceiling(n/nsnp_per_chunk)), each = nsnp_per_chunk)[1:n]
+  snplist_split <- split(snplist, nsplit)
+  splits <- data.frame(snps = snplist, chunk_id=nsplit)
   
   l <- list()
   for(i in 1:length(nsnp_per_chunk))
   {
-    message(nsplit, " chunks were generated out of ", length(snplist), " SNPs")
+    message(max(splits$chunk_id), " chunks were generated out of ", n, " SNPs")
     
     l[[i]] <- plyr::ddply(splits, c("chunk_id"), function(x)
       {
