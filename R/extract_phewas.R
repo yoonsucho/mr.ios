@@ -10,32 +10,44 @@
 #' @export
 #' @return Data frame
 
-extract_phewas <- function(snplist = NULL, id_bg = id_bg, nsnp_per_chunk = 30){
+extract_phewas <- function(snplist = NULL, id_bg = id_bg, nsnp_per_chunk = 5){
   
   batchlist <- sapply(strsplit(id_bg, "-"), function(x) paste(x[1], x[2], sep="-"))
+  #basplit <- rep(1:ceiling((length(batchlist)/1500)), each = 1500)[1:length(batchlist)]
+  #balist_split <- split(batchlist, basplit)
+  #basplits <- data.frame(id = batchlist, chunk_id=basplit)
   
   n = length(snplist)
   nsplit <- rep(1:(ceiling(n/nsnp_per_chunk)), each = nsnp_per_chunk)[1:n]
   snplist_split <- split(snplist, nsplit)
   splits <- data.frame(snps = snplist, chunk_id=nsplit)
   
-  l <- list()
-  for(i in 1:length(nsnp_per_chunk))
-  {
-    message(max(splits$chunk_id), " chunks were generated out of ", n, " SNPs")
-    
-    l[[i]] <- plyr::ddply(splits, c("chunk_id"), function(x)
+  
+  #if(max(basplits$chunk_id) > 1)
+  #  {
+    l <- list()
+    for(i in 1:length(nsnp_per_chunk))
+    {
+      message(max(splits$chunk_id), " chunks were generated out of ", n, " SNPs")
+      
+      l[[i]] <- plyr::ddply(splits, c("chunk_id"), function(x)
       {
-      x <- plyr::mutate(x)
-      message(" [>] ", x$chunk_id[1], " of ", max(splits$chunk_id), " chunks")
-      
-      d <- ieugwasr::phewas(x$snps, pval=1, batch=unique(batchlist)) %>% subset(id %in% id_bg)
-      
-      if(!is.data.frame(d)) d <- data.frame()
-      return(d)
-    })
-  }
-  temp <- bind_rows(l)
+        x <- plyr::mutate(x)
+        message(" [>] ", x$chunk_id[1], " of ", max(splits$chunk_id), " chunks")
+        
+        #for(j in 1:max(basplits$chunk_id))
+        #  {
+           d <-  ieugwasr::phewas(x$snps, pval=1, batch=unique(batchlist)) %>% subset(id %in% id_bg)
+        #  }
+        
+        if(!is.data.frame(d)) d <- data.frame()
+        return(d)
+      })
+    }
+    temp <- bind_rows(l)
+    
+  #}
+    
   
   #remove duplicates
   #remove traits without eaf info

@@ -21,6 +21,8 @@
 # choose background dataset list
 background_ids <- function(id_exp=id_exp, id_out=id_out, type=c("general", "advanced", "eqtl", "metabolite", "protein", "ubm")[1]){
   
+  stopifnot(type %in% c("general", "advanced", "eqtl", "metabolite", "protein", "ubm"))
+  
   ao <- suppressMessages(TwoSampleMR::available_outcomes())
   
   if(type[1] == "general") {
@@ -129,7 +131,7 @@ background_ids <- function(id_exp=id_exp, id_out=id_out, type=c("general", "adva
 make_background <- function(exp = exp_dat, id_bg = id_bg) {
   #-----------------------------------------------------------------------------------------------------
   #Generate background dataset which includes phenotypes associated with outliers (suspicious SNPs).
-  bdat <- extract_phewas(snplist = exp$SNP, id_bg = id_bg, nsnp_per_chunk = 30)
+  bdat <- extract_phewas(snplist = exp$SNP, id_bg = id_bg, nsnp_per_chunk = 5)
   
   #bdat2 <- TwoSampleMR::extract_outcome_data(snps = exp$SNP, outcomes = id_bg, proxies = FALSE)
   
