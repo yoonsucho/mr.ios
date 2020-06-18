@@ -10,45 +10,37 @@
 #' @export
 #' @return Data frame
 
-extract_phewas <- function(snplist = NULL, id_bg = id_bg, nsnp_per_chunk = 5){
+extract_phewas <- function(snplist = NULL, id_bg = id_bg, nsnp_per_chunk = 10){
   
+  #Define the list of batches for Phewas
   batchlist <- sapply(strsplit(id_bg, "-"), function(x) paste(x[1], x[2], sep="-"))
-  #basplit <- rep(1:ceiling((length(batchlist)/1500)), each = 1500)[1:length(batchlist)]
-  #balist_split <- split(batchlist, basplit)
-  #basplits <- data.frame(id = batchlist, chunk_id=basplit)
-  
+  batches <- unique(batchlist)
+
+  #Split the SNPs into each chunk
   n = length(snplist)
   nsplit <- rep(1:(ceiling(n/nsnp_per_chunk)), each = nsnp_per_chunk)[1:n]
   snplist_split <- split(snplist, nsplit)
   splits <- data.frame(snps = snplist, chunk_id=nsplit)
   
   
-  #if(max(basplits$chunk_id) > 1)
-  #  {
+  #Phewas scanning of SNPs in each chunk and each batch
     l <- list()
-    for(i in 1:length(nsnp_per_chunk))
-    {
-      message(max(splits$chunk_id), " chunks were generated out of ", n, " SNPs")
-      
-      l[[i]] <- plyr::ddply(splits, c("chunk_id"), function(x)
+   
+    k <- 1
+    for(i in 1:max(nsplit))
       {
-        x <- plyr::mutate(x)
-        message(" [>] ", x$chunk_id[1], " of ", max(splits$chunk_id), " chunks")
-        
-        #for(j in 1:max(basplits$chunk_id))
-        #  {
-           d <-  ieugwasr::phewas(x$snps, pval=1, batch=unique(batchlist)) %>% subset(id %in% id_bg)
-        #  }
-        
-        if(!is.data.frame(d)) d <- data.frame()
-        return(d)
-      })
-    }
+      message(max(nsplit), " chunks were generated out of ", n, " SNPs")
+      for(j in batches)
+        {
+        message(" [>] ", i, " of ", max(splits$chunk_id), " chunks; search for ", j)
+        l[[k]] <- ieugwasr::phewas(variants=snplist_split[[i]], batch=j)
+        k <- k + 1
+         }
+      }
+      
     temp <- dplyr::bind_rows(l)
-    
-  #}
-    
-  
+
+
   #remove duplicates
   #remove traits without eaf info
   #remove traits with se < 0
@@ -63,17 +55,17 @@ extract_phewas <- function(snplist = NULL, id_bg = id_bg, nsnp_per_chunk = 5){
   col_order <- c("rsid", "chr", "position", "beta", "se", "n", "p", "eaf", "ea", "nea", "trait", "id")
   out <- temp[, col_order]
   
-  out <- plyr::rename(out, c("rsid" = "SNP",
-                             "position" = "pos",
-                             "beta" = "beta.outcome",
-                             "se" = "se.outcome",
-                             "n" = "samplesize.outcome",
-                             "p" = "pval.outcome",
-                             "eaf" = "eaf.outcome",
-                             "ea" = "effect_allele.outcome",
-                             "nea" = "other_allele.outcome",
-                             "trait" = "outcome",
-                             "id" = "id.outcome"))
+  out <- dplyr::rename(out, c("SNP" = "rsid",
+                              "pos" = "position",
+                              "beta.outcome" = "beta",
+                              "se.outcome" = "se",
+                              "samplesize.outcome" = "n",
+                              "pval.outcome" = "p",
+                              "eaf.outcome" = "eaf",
+                              "effect_allele.outcome" = "ea",
+                              "other_allele.outcome" = "nea",
+                              "outcome" = "trait",
+                              "id.outcome" = "id"))
   
   
   

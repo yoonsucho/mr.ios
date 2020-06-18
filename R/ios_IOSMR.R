@@ -56,19 +56,7 @@ ios <- function(exp=exp_dat, bg=bg_dat){
 #dat <- harmonise_data(exp_dat, out_dat)
 #mr_res <- mr.ios(dat=dat, ios=ios_dat)
 
-mr.ios <-function(dat=dat, ios = ios, alpha = 0.05, weights, tol = 0.0001){
-  
-  #weights <- weights + 3
-  #warning message if there is no weights / if it is not correct method
-  dat_rmr <- RadialMR::format_radial(dat$beta.exposure, dat$beta.outcome, dat$se.exposure, dat$se.outcome, dat$SNP, ios$ios1_mean, ios$SNP)
-  rares <- RadialMR::ivw_radial(dat_rmr, alpha, weights, tol, external_weight = TRUE)
-  
-  return(rares)
-  
-}
-
-
-mr.ios_type <-function(dat=dat, ios = ios_dat, ios_type="ios1_mean", alpha = 0.05, weights, tol = 0.0001){
+mr.ios <-function(dat=dat, ios = ios_dat, ios_type="ios1_mean", alpha = 0.05, weights, tol = 0.0001){
   dat_rmr <- RadialMR::format_radial(dat$beta.exposure, dat$beta.outcome, dat$se.exposure, dat$se.outcome, dat$SNP, ios[[ios_type]], ios$SNP)
   rares <- RadialMR::ivw_radial(dat_rmr, alpha, weights, tol, external_weight = TRUE)
   return(rares)

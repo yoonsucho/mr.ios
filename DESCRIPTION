@@ -10,13 +10,13 @@ Imports:
     dplyr,
     plyr,
     ieugwasr,
-    ggplot2
+    ggplot2,
+    magrittr
 Suggests: 
     igraph,
     testthat,
     knitr,
     rmarkdown,
-    magrittr,
     tidyr,
     glmnet,
     ggrepel
