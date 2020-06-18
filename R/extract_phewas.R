@@ -44,7 +44,7 @@ extract_phewas <- function(snplist = NULL, id_bg = id_bg, nsnp_per_chunk = 5){
         return(d)
       })
     }
-    temp <- bind_rows(l)
+    temp <- dplyr::bind_rows(l)
     
   #}
     
