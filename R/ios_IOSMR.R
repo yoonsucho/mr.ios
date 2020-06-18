@@ -11,6 +11,7 @@
 
 # calculate ios
 ios <- function(exp=exp_dat, bg=bg_dat){
+  requireNamespace("dplyr", quietly = TRUE)
   ios <- dplyr::group_by(bg, SNP) %>%
     dplyr::summarise(
       ios1_mean = sum(rsq.outcome, na.rm=TRUE), #sum or mean
