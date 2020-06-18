@@ -9,7 +9,8 @@ Imports:
     RadialMR,
     dplyr,
     plyr,
-    ieugwasr
+    ieugwasr,
+    ggplot2
 Suggests: 
     igraph,
     testthat,
@@ -17,7 +18,6 @@ Suggests:
     rmarkdown,
     magrittr,
     tidyr,
-    ggplot2,
     glmnet,
     ggrepel
 License: MIT + file LICENSE

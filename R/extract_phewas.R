@@ -54,9 +54,9 @@ extract_phewas <- function(snplist = NULL, id_bg = id_bg, nsnp_per_chunk = 5){
   #remove traits with se < 0
 
   temp <- subset(temp) %>%
-    filter(!duplicated(temp)) %>%
-    filter(!is.na(eaf)) %>%
-    filter(se > 0)
+    dplyr::filter(!duplicated(temp)) %>%
+    dplyr::filter(!is.na(eaf)) %>%
+    dplyr::filter(se > 0)
 
   
   #Rearrange dataset

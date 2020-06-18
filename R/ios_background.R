@@ -27,11 +27,11 @@ background_ids <- function(id_exp=id_exp, id_out=id_out, type=c("general", "adva
   
   if(type[1] == "general") {
     ids <- subset(ao) %>%
-      arrange(desc(sample_size)) %>%
-      filter(nsnp > 100000) %>%
-      filter(!duplicated(trait), mr == 1) %>%
-      filter(grepl("ukb-b|ieu-a|ebi-a", id)) %>%
-      filter(! id %in% c(id_exp, id_out))
+      dplyr::arrange(desc(sample_size)) %>%
+      dplyr::filter(nsnp > 100000) %>%
+      dplyr::filter(!duplicated(trait), mr == 1) %>%
+      dplyr::filter(grepl("ukb-b|ieu-a|ebi-a", id)) %>%
+      dplyr::filter(! id %in% c(id_exp, id_out))
     
     ids <- subset(ids, !(category == "NA" & unit == "NA"))
     id_list <- ids$id 
@@ -41,11 +41,11 @@ background_ids <- function(id_exp=id_exp, id_out=id_out, type=c("general", "adva
   
   if(type[1] == "advanced"){
     ids <- subset(ao) %>%
-      arrange(desc(sample_size)) %>%
-      filter(nsnp > 100000) %>%
-      filter(!duplicated(trait), mr == 1) %>%
-      filter(!grepl("ukb-a", id)) %>%
-      filter(! id %in% c(id_exp, id_out))
+      dplyr::arrange(desc(sample_size)) %>%
+      dplyr::filter(nsnp > 100000) %>%
+      dplyr::filter(!duplicated(trait), mr == 1) %>%
+      dplyr::filter(!grepl("ukb-a", id)) %>%
+      dplyr::filter(! id %in% c(id_exp, id_out))
     
     ids <- subset(ids, !(category == "NA" & unit == "NA"))
     id_list <- ids$id 
@@ -55,11 +55,11 @@ background_ids <- function(id_exp=id_exp, id_out=id_out, type=c("general", "adva
   
   if(type[1] == "eqtl") {
     ids <- subset(ao) %>%
-      arrange(desc(sample_size)) %>%
-      filter(nsnp > 100000) %>%
-      filter(!duplicated(trait), mr == 1) %>%
-      filter(grepl("eqtl-a", id)) %>%
-      filter(! id %in% c(id_exp, id_out))
+      dplyr::arrange(desc(sample_size)) %>%
+      dplyr::filter(nsnp > 100000) %>%
+      dplyr::filter(!duplicated(trait), mr == 1) %>%
+      dplyr::filter(grepl("eqtl-a", id)) %>%
+      dplyr::filter(! id %in% c(id_exp, id_out))
     
     ids <- subset(ids, !(category == "NA" & unit == "NA"))
     id_list <- ids$id 
@@ -69,11 +69,11 @@ background_ids <- function(id_exp=id_exp, id_out=id_out, type=c("general", "adva
   
   if(type[1] == "metabolite") {
     ids <- subset(ao) %>%
-      arrange(desc(sample_size)) %>%
-      filter(nsnp > 100000) %>%
-      filter(!duplicated(trait), mr == 1) %>%
-      filter(grepl("met", id)) %>%
-      filter(! id %in% c(id_exp, id_out))
+      dplyr::arrange(desc(sample_size)) %>%
+      dplyr::filter(nsnp > 100000) %>%
+      dplyr::filter(!duplicated(trait), mr == 1) %>%
+      dplyr::filter(grepl("met", id)) %>%
+      dplyr::filter(! id %in% c(id_exp, id_out))
     
     ids <- subset(ids, !(category == "NA" & unit == "NA"))
     id_list <- ids$id 
@@ -83,11 +83,11 @@ background_ids <- function(id_exp=id_exp, id_out=id_out, type=c("general", "adva
   
   if(type[1] == "protein") {
     ids <- subset(ao) %>%
-      arrange(desc(sample_size)) %>%
-      filter(nsnp > 100000) %>%
-      filter(!duplicated(trait), mr == 1) %>%
-      filter(grepl("prot", id)) %>%
-      filter(! id %in% c(id_exp, id_out))
+      dplyr::arrange(desc(sample_size)) %>%
+      dplyr::filter(nsnp > 100000) %>%
+      dplyr::filter(!duplicated(trait), mr == 1) %>%
+      dplyr::filter(grepl("prot", id)) %>%
+      dplyr::filter(! id %in% c(id_exp, id_out))
     
     ids <- subset(ids, !(category == "NA" & unit == "NA"))
     id_list <- ids$id 
@@ -97,11 +97,11 @@ background_ids <- function(id_exp=id_exp, id_out=id_out, type=c("general", "adva
   
   if(type[1] == "ubm") {
     ids <- subset(ao) %>%
-      arrange(desc(sample_size)) %>%
-      filter(nsnp > 100000) %>%
-      filter(!duplicated(trait), mr == 1) %>%
-      filter(grepl("ubm", id)) %>%
-      filter(! id %in% c(id_exp, id_out))
+      dplyr::arrange(desc(sample_size)) %>%
+      dplyr::filter(nsnp > 100000) %>%
+      dplyr::filter(!duplicated(trait), mr == 1) %>%
+      dplyr::filter(grepl("ubm", id)) %>%
+      dplyr::filter(! id %in% c(id_exp, id_out))
     
     ids <- subset(ids, !(category == "NA" & unit == "NA"))
     id_list <- ids$id 
