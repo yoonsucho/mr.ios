@@ -6,7 +6,10 @@ Description: Insturments associated with other phenotypes than the exposure lead
 Depends: R (>= 3.6.0) 
 Imports: 
     TwoSampleMR,
-    RadialMR
+    RadialMR,
+    dplyr,
+    plyr,
+    ieugwasr
 Suggests: 
     igraph,
     testthat,
@@ -16,10 +19,7 @@ Suggests:
     tidyr,
     ggplot2,
     glmnet,
-    ggrepel,
-    ieugwasr,
-    plyr,
-    dplyr
+    ggrepel
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
