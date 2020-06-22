@@ -5,12 +5,21 @@
 \alias{mr.ios}
 \title{MR.IOS:: Calculate index of suspicion}
 \usage{
-mr.ios(dat = dat, ios = ios, alpha = 0.05, weights, tol = 1e-04)
+mr.ios(
+  dat = dat,
+  ios = ios_dat,
+  ios_type = "ios1_mean",
+  alpha = 0.05,
+  weights,
+  tol = 1e-04
+)
 }
 \arguments{
 \item{dat}{Harmonised dataset of the exposure and the outcome, obtained using \code{TwoSampleMR::harmonise_data()}}
 
 \item{ios}{IOS score obtained using \code{ios()}}
+
+\item{ios_type}{Types of IOS estimators. Defalt value is \code{"ios1_mean"}.}
 
 \item{alpha}{Statistial significance threshold for identifying outliers. Default value is \code{0.05}.}
 

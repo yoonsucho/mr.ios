@@ -44,6 +44,7 @@ ios <- function(exp=exp_dat, bg=bg_dat){
 #'  
 #' @param dat Harmonised dataset of the exposure and the outcome, obtained using \code{TwoSampleMR::harmonise_data()}
 #' @param ios IOS score obtained using \code{ios()}
+#' @param ios_type Types of IOS estimators. Defalt value is \code{"ios1_mean"}. 
 #' @param alpha Statistial significance threshold for identifying outliers. Default value is \code{0.05}.
 #' @param weights Inverse variance weights used to calculate IVW estimate and Cochran's Q statistic, considering IOS in the model. Detailed information of the definition of each weight is provided here: \code{https://github.com/WSpiller/RadialMR}. Select first order (\code{1}), second order (\code{2}) or modified second order weights (\code{3}).
 #' @param tol Tolerance threshold for performing the iterative IVW approach. Default value is \code{0.0001}.

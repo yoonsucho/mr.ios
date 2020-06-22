@@ -5,9 +5,9 @@ ios_plot <- function(iosmr = ios_mr, ios = ios_dat, ios_type="ios1_mean"){
   
   p <- temp %>%
         dplyr::arrange(Qj) %>%
-        ggplot2::ggplot(aes(y=BetaWj, x=Wj)) +
+        ggplot2::ggplot(ggplot2::aes(y=BetaWj, x=Wj)) +
         ggplot2::geom_smooth(method='lm', formula = y ~ x, se=FALSE, size=0.5) +
-        ggplot2::geom_point(aes(size = ios[[ios_type]]), colour = "deepskyblue", alpha = 1) +
+        ggplot2::geom_point(ggplot2::aes(size = ios[[ios_type]]), colour = "deepskyblue", alpha = 1) +
         #geom_line(aes(colour=as.factor(method))) +
         #geom_hline(yintercept=648.0386, linetype="dashed", color = "grey") +
         ggplot2::labs(x="Wj", y="BetaWj", size="ios score")  

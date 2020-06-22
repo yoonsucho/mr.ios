@@ -4,7 +4,7 @@
 \alias{extract_phewas}
 \title{Extract information from IEU GWAS database}
 \usage{
-extract_phewas(snplist = NULL, id_bg = id_bg, nsnp_per_chunk = 5)
+extract_phewas(snplist = NULL, id_bg = id_bg, nsnp_per_chunk = 10)
 }
 \arguments{
 \item{snplist}{A list of instrumental genetic variants for the exposure.}

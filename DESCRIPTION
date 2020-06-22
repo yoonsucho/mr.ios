@@ -8,7 +8,6 @@ Imports:
     TwoSampleMR,
     RadialMR,
     dplyr,
-    plyr,
     ieugwasr,
     ggplot2,
     magrittr

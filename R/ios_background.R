@@ -27,7 +27,7 @@ background_ids <- function(id_exp=id_exp, id_out=id_out, type=c("default", "broa
   
   if(type[1] == "default") {
     ids <- subset(ao) %>%
-      dplyr::arrange(desc(sample_size)) %>%
+      dplyr::arrange(dplyr::desc(sample_size)) %>%
       dplyr::filter(nsnp > 100000) %>%
       dplyr::filter(!duplicated(trait), mr == 1) %>%
       dplyr::filter(grepl("ukb-b|ieu-a|ebi-a", id)) %>%
@@ -41,7 +41,7 @@ background_ids <- function(id_exp=id_exp, id_out=id_out, type=c("default", "broa
   
   if(type[1] == "broad"){
     ids <- subset(ao) %>%
-      dplyr::arrange(desc(sample_size)) %>%
+      dplyr::arrange(dplyr::desc(sample_size)) %>%
       dplyr::filter(nsnp > 100000) %>%
       dplyr::filter(!duplicated(trait), mr == 1) %>%
       dplyr::filter(!grepl("ukb-a", id)) %>%
@@ -55,7 +55,7 @@ background_ids <- function(id_exp=id_exp, id_out=id_out, type=c("default", "broa
   
   if(type[1] == "eqtl") {
     ids <- subset(ao) %>%
-      dplyr::arrange(desc(sample_size)) %>%
+      dplyr::arrange(dplyr::desc(sample_size)) %>%
       dplyr::filter(nsnp > 100000) %>%
       dplyr::filter(!duplicated(trait), mr == 1) %>%
       dplyr::filter(grepl("eqtl-a", id)) %>%
@@ -69,7 +69,7 @@ background_ids <- function(id_exp=id_exp, id_out=id_out, type=c("default", "broa
   
   if(type[1] == "metabolite") {
     ids <- subset(ao) %>%
-      dplyr::arrange(desc(sample_size)) %>%
+      dplyr::arrange(dplyr::desc(sample_size)) %>%
       dplyr::filter(nsnp > 100000) %>%
       dplyr::filter(!duplicated(trait), mr == 1) %>%
       dplyr::filter(grepl("met", id)) %>%
@@ -83,7 +83,7 @@ background_ids <- function(id_exp=id_exp, id_out=id_out, type=c("default", "broa
   
   if(type[1] == "protein") {
     ids <- subset(ao) %>%
-      dplyr::arrange(desc(sample_size)) %>%
+      dplyr::arrange(dplyr::desc(sample_size)) %>%
       dplyr::filter(nsnp > 100000) %>%
       dplyr::filter(!duplicated(trait), mr == 1) %>%
       dplyr::filter(grepl("prot", id)) %>%
@@ -97,7 +97,7 @@ background_ids <- function(id_exp=id_exp, id_out=id_out, type=c("default", "broa
   
   if(type[1] == "ubm") {
     ids <- subset(ao) %>%
-      dplyr::arrange(desc(sample_size)) %>%
+      dplyr::arrange(dplyr::desc(sample_size)) %>%
       dplyr::filter(nsnp > 100000) %>%
       dplyr::filter(!duplicated(trait), mr == 1) %>%
       dplyr::filter(grepl("ubm", id)) %>%
