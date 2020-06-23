@@ -33,7 +33,7 @@ extract_phewas <- function(snplist = NULL, id_bg = id_bg, nsnp_per_chunk = 10){
       for(j in batches)
         {
         message(" [>] ", i, " of ", max(splits$chunk_id), " chunks; search for ", j)
-        l[[k]] <- ieugwasr::phewas(variants=snplist_split[[i]], batch=j)
+        l[[k]] <- ieugwasr::phewas(variants=snplist_split[[i]], batch=j) %>% subset(id %in% id_bg)
         k <- k + 1
          }
       }
