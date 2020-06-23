@@ -38,7 +38,7 @@ extract_phewas <- function(snplist = NULL, id_bg = id_bg, nsnp_per_chunk = 10){
          }
       }
       
-    temp <- dplyr::bind_rows(l)
+    temp <- dplyr::bind_rows(l) %>% subset(id %in% id_bg) 
 
 
   #remove duplicates
@@ -46,7 +46,6 @@ extract_phewas <- function(snplist = NULL, id_bg = id_bg, nsnp_per_chunk = 10){
   #remove traits with se < 0
 
   temp <- subset(temp) %>%
-    subset(id %in% id_bg) %>%
     dplyr::filter(!duplicated(temp)) %>%
     dplyr::filter(!is.na(eaf)) %>%
     dplyr::filter(se > 0)
