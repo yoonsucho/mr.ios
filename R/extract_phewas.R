@@ -33,7 +33,7 @@ extract_phewas <- function(snplist = NULL, id_bg = id_bg, nsnp_per_chunk = 10){
       for(j in batches)
         {
         message(" [>] ", i, " of ", max(splits$chunk_id), " chunks; search for ", j)
-        l[[k]] <- ieugwasr::phewas(variants=snplist_split[[i]], batch=j) %>% subset(id %in% id_bg)
+        l[[k]] <- ieugwasr::phewas(variants=snplist_split[[i]], pval = 1, batch=j)
         k <- k + 1
          }
       }
@@ -46,6 +46,7 @@ extract_phewas <- function(snplist = NULL, id_bg = id_bg, nsnp_per_chunk = 10){
   #remove traits with se < 0
 
   temp <- subset(temp) %>%
+    subset(id %in% id_bg) %>%
     dplyr::filter(!duplicated(temp)) %>%
     dplyr::filter(!is.na(eaf)) %>%
     dplyr::filter(se > 0)
