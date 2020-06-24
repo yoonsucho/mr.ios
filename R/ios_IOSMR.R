@@ -22,7 +22,7 @@ ios <- function(exp=exp_dat, bg=bg_dat){
       ios1_95 = quantile(rsq.outcome, 0.95, na.rm=TRUE),
       ios1_max = max(rsq.outcome, na.rm=TRUE),
       ios2_sum = sum(r2_ratio, na.rm=TRUE),
-      ios2_mean = mean(rsq.outcome, na.rm=TRUE),
+      ios2_mean = mean(r2_ratio, na.rm=TRUE),
       ios2_sd = sd(r2_ratio, na.rm=TRUE),
       ios2_iqr = quantile(r2_ratio, 0.75, na.rm=TRUE) - quantile(r2_ratio, 0.25, na.rm=TRUE),
       ios2_median = median(r2_ratio, na.rm=TRUE),
