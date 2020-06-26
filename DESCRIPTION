@@ -10,7 +10,8 @@ Imports:
     dplyr,
     ieugwasr,
     ggplot2,
-    magrittr
+    magrittr,
+    missMDA
 Suggests: 
     igraph,
     testthat,
