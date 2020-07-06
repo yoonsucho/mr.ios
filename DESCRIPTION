@@ -11,7 +11,8 @@ Imports:
     ieugwasr,
     ggplot2,
     magrittr,
-    missMDA
+    missMDA,
+    pvclust
 Suggests: 
     igraph,
     testthat,

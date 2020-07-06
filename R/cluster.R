@@ -30,9 +30,9 @@ bg_to_wide <- function(bg_dat, value_column = "rsq.outcome")
 #'
 #' @param bg_dat <what param does>
 #' @param value_column <what param does>
-#' @param kmax=15 <what param does>
-#' @param nstart=50 <what param does>
-#' @param iter.max=15 <what param does>
+#' @param kmax <what param does>
+#' @param nstart <what param does>
+#' @param iter.max <what param does>
 #'
 #' @export
 #' @return
@@ -59,7 +59,7 @@ kmeans_instruments <- function(bg_dat, value_column, kmax=15, nstart=50, iter.ma
 #'
 #' @param bg_dat <what param does>
 #' @param value_column <what param does>
-#' @param kmax=50 <what param does>
+#' @param kmax <what param does>
 #'
 #' @export
 #' @return
@@ -98,7 +98,10 @@ hclust_instruments <- function(bg_dat, value_column, kmax=50)
 #'
 #' @param bg_dat <what param does>
 #' @param value_column <what param does>
-#' @param kmax=50 <what param does>
+#' @param alpha <what param does>
+#' @param method.hclust <what param does>
+#' @param method.dist <what param does>
+#' @param nboot <what param does>
 #'
 #' @export
 #' @return

@@ -2,9 +2,13 @@
 
 export("%>%")
 export(background_ids)
+export(bg_to_wide)
 export(extract_phewas)
+export(hclust_instruments)
 export(ios)
 export(ios_plot)
+export(kmeans_instruments)
 export(make_background)
 export(mr.ios)
+export(pvclust_instruments)
 importFrom(magrittr,"%>%")
