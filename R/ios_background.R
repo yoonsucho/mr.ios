@@ -44,7 +44,7 @@ background_ids <- function(id_exp=id_exp, id_out=id_out, type=c("default", "broa
       dplyr::arrange(dplyr::desc(sample_size)) %>%
       dplyr::filter(nsnp > 100000) %>%
       dplyr::filter(!duplicated(trait), mr == 1) %>%
-      dplyr::filter(!grepl("ukb-a", id)) %>%
+      dplyr::filter(!grepl("ukb-a|bbj-a|ieu-b|finn-a", id)) %>%
       dplyr::filter(! id %in% c(id_exp, id_out))
     
     ids <- subset(ids, !(category == "NA" & unit == "NA"))
