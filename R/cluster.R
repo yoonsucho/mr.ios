@@ -46,11 +46,12 @@ kmeans_instruments <- function(bg_dat, value_column, kmax=15, nstart=50, iter.ma
 		message(k)
 		kmeans(wide, k, nstart=nstart, iter.max=iter.max)
 	})
-
+	
 	mse <- sapply(l, function(x) x$tot.withinss)
+	cluster <- sapply(l, function(x) x$cluster)
 	diff_mse <- diff(mse) * -1
 	which.max(diff_mse) + 2
-	dat <- dplyr::tibble(instrument=rownames(cuts), cluster=cuts[,which.max(diff_mse) + 2])
+	dat <- dplyr::tibble(instrument=rownames(cluster), cluster=cluster[,which.max(diff_mse) + 2])
 	return(dat)
 }
 
@@ -88,7 +89,7 @@ hclust_instruments <- function(bg_dat, value_column, kmax=50)
 	mse <- get_mse(d, cuts)
 	diff_mse <- diff(mse) * -1
 	which.max(diff_mse) + 2
-	dat <- dplyr::tibble(instrument=rownames(cuts), cluster=l[[which.max(diff_mse) + 2]]$cluster)
+	dat <- dplyr::tibble(instrument=rownames(cuts), cluster=hc[[which.max(diff_mse) + 2]]$cluster)
 	return(dat)
 }
 
@@ -102,9 +103,11 @@ hclust_instruments <- function(bg_dat, value_column, kmax=50)
 #' @param method.hclust <what param does>
 #' @param method.dist <what param does>
 #' @param nboot <what param does>
+#' 
 #'
 #' @export
 #' @return
+
 pvclust_instruments <- function(bg_dat, value_column, alpha=0.95, method.hclust="ward.D", method.dist="euclidean", nboot=200)
 {
 	wide <- bg_to_wide(bg_dat, value_column)
