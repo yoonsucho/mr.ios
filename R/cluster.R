@@ -51,7 +51,7 @@ kmeans_instruments <- function(bg_dat, value_column, kmax=15, nstart=50, iter.ma
 	cluster <- sapply(l, function(x) x$cluster)
 	diff_mse <- diff(mse) * -1
 	which.max(diff_mse) + 2
-	dat <- dplyr::tibble(instrument=rownames(cluster), cluster=cluster[,which.max(diff_mse) + 2])
+	dat <- dplyr::tibble(SNP = rownames(cluster), cluster = cluster[,which.max(diff_mse) + 2])
 	return(dat)
 }
 
@@ -89,7 +89,7 @@ hclust_instruments <- function(bg_dat, value_column, kmax=50)
 	mse <- get_mse(d, cuts)
 	diff_mse <- diff(mse) * -1
 	which.max(diff_mse) + 2
-	dat <- dplyr::tibble(instrument=rownames(cuts), cluster=hc[[which.max(diff_mse) + 2]]$cluster)
+	dat <- dplyr::tibble(SNP = rownames(cuts), cluster = hc[[which.max(diff_mse) + 2]]$cluster)
 	return(dat)
 }
 
