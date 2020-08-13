@@ -12,7 +12,8 @@ Imports:
     ggplot2,
     magrittr,
     missMDA,
-    pvclust
+    pvclust,
+    fpc
 Suggests: 
     igraph,
     testthat,
