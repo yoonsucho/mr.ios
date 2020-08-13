@@ -8,54 +8,15 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Insturments associated with other phenotypes than the exposure lead MR estimate being biased (horizontal pleiotropy). This package is designed to predict which instruments are likely to be problematic due to pleiotropy and downweight them to be used in MR. 
 
-
-# IOS
-Suppose we estimate the effect of X on Y. X is instrumented by genetic variants, which are likely to be associated with other phenotypes. We can use external data to predict which instrument are the most pleiotropic to down weight them. 
- 1. Make score for every SNP to see how likely it is to be pleiotropic.
- 2. Perform MR accounting for pleiotropy using IOS (e.g. higher IOS = lower weight) 
-
-* Two basic approaches to estimate IOS
-	- ios1: A summary of the SNP r2 with the other traits (r2_gu)
-	- ios2: A summary of the ratio of r2_gu / r2_gx, where r2_gx is the variance explained by the SNP on the exposure. Estimates the index of suspicion, whereupon SNPs which have a larger effect on a set of traits given their effect on the exposure are deemed more suspicious
-
-# Main question
- 1. Does IOS correlate with Qj in model 1?
- 2. Does Q reduce in model 2 compared to model 1?
- 3. How different are casual estimates (bxy) in model 1 and model 2?
- 4. How much does SE change (i.e. does power improve in model 2)?
-
-
-# Plans
-
-1. Defining IOS
-
-2. Write functions for 
-  * Generating background dataset
-	* Set a range of available data (id list)
-  * MR analysis considering IOS: IOS will be taken account into the MR model. The variants with higher IOS scores will be down-weighted.
-	* Intergrate IOS with Radial MR for weighting and MR
-
-3. Apply the functions to empirical analysis to answer the main questions
-  * The following phenotypes will be used as examples:
-	* SBP - CHD
-	* Urate (new summary stats available) - eGFR
-	* CRP (new summary stats available) - CHD 
-
-
-
-
---------
-
-# Plans
-
-* Defining IOS
-* Write functions for 
-  * Generating background dataset
-  * Performing MR using IOS as weight
-
-
+---
+title: "MR.IOS examples"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{my-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
 
 ```{r, include = FALSE, message=FALSE}
 knitr::opts_chunk$set(
@@ -64,42 +25,78 @@ knitr::opts_chunk$set(
 )
 ```
 
---------
 
-# Example
-
-Call the packages
-
+# Empirical examples using mr.ios packages
+Here we tested the associations of the following phenotypes;
+   1. BMI - CHD
+   2. SBP - CHD
+   3. EDU - BMI
+   4. Sleep - Schizophrenia 
+   5. Urate - CHD
+   6. Urate - eGFR
+   7. CRP - CHD
+   8. CRP - SCZ
+   
+   
+   
 ```{r}
-library(TwoSampleMR)
-library(RadialMR)
+#install.packages("devtools")
+#devtools::install_github("universe77/mr.ios")
+#devtools::install_github("universe77/RadialMR")
+
+library(devtools)
 library(mr.ios)
+library(RadialMR)
+library(TwoSampleMR)
+library(dplyr)
+library(tidyverse)
 ```
 
-## BMI and CHD
 
+## SBP-CHD
 
-```{r, eval=FALSE}
-# choose exposure - BMI
-id_exp <- "ieu-a-2"
-exp_dat <- TwoSampleMR::extract_instruments(id_exp)
+```{r}
+# choose exposure - SBP
+id_exp <- "ukb-b-20175"
+exp_dat <- extract_instruments(id_exp)
 
 # choose outcome - CHD
 id_out <- "ieu-a-7"
-out_dat <- TwoSampleMR::extract_outcome_data(exp_dat$SNP, id_out)
+out_dat <- extract_outcome_data(exp_dat$SNP, id_out)
 
 # choose background dataset list
-id_bg <- background_ids(id_exp=id_exp, id_out=id_out, type="default")
+id_bg <- background_ids(id_exp=id_exp, id_out=id_out, type = "broad")
+id_bg2 <- background_ids(id_exp=id_exp, id_out=id_out, type = "default")
 
 # make background dataset
 bg_dat <- make_background(exp = exp_dat, id_bg = id_bg)
-
-# generate ios
-ios_dat <- ios(exp=exp_dat, bg=bg_dat)
-
-# perform mr
-dat <- TwoSampleMR::harmonise_data(exp_dat, out_dat)
-mr_res <- mr.ios(dat=dat, ios = ios_dat, alpha = 0.05, 1, tol = 0.0001) 
+bg_dat2 <- make_background(exp = exp_dat, id_bg = id_bg2)
 ```
 
---------
+
+For MR in each group of cluster for instruments:
+```{r}
+#----------------------------------------------------------------------------------------------
+# MR Clustering
+#----------------------------------------------------------------------------------------------
+
+kmean <- mr_cluster(bg = bg_dat, dat = dat, method = c("kmean"))
+hclust <- mr_cluster(bg = bg_dat, dat = dat, method = c("hclust"))
+pv <- mr_cluster(bg = bg_dat, dat = dat, method = c("pv"))
+pam <- mr_cluster(bg = bg_dat, dat = dat, method = c("pam"))
+
+```
+
+
+Test if esimates from each cluster give substantially different results (e.g. durban wu houseman test)
+
+```{r}
+Q <- 0
+for(i in 1:max(dat[ , ncol(dat)]))
+{
+                bji <- res_clust[[i]]$betaWj
+                Q <- Q + sum(w * (bji - res_clust[[i]]$coef)^2)
+}
+```
+
+- Identify the background traits related to each cluster

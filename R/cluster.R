@@ -36,8 +36,10 @@ bg_to_wide <- function(bg_dat, value_column = "rsq.outcome")
 #'
 #' @export
 #' @return
-kmeans_instruments <- function(bg_dat, value_column, kmax=15, nstart=50, iter.max=15)
+kmeans_instruments <- function(bg_dat, value_column, kmax=min(15, length(unique(bg_dat$SNP))), nstart=50, iter.max=15)
 {
+  
+  #kmax=min(15, length(unique(bg_dat$SNP)))
 	wide <- bg_to_wide(bg_dat, value_column)
 
 	message("Performing k-means clustering for up to ", kmax, " clusters")
@@ -50,8 +52,8 @@ kmeans_instruments <- function(bg_dat, value_column, kmax=15, nstart=50, iter.ma
 	mse <- sapply(l, function(x) x$tot.withinss)
 	cluster <- sapply(l, function(x) x$cluster)
 	diff_mse <- diff(mse) * -1
-	which.max(diff_mse) + 2
-	dat <- dplyr::tibble(SNP = rownames(cluster), cluster = cluster[,which.max(diff_mse) + 2])
+	clust <- which.max(diff_mse) + 2
+	dat <- dplyr::tibble(SNP = rownames(cluster), cluster = cluster[,clust])
 	return(dat)
 }
 
@@ -64,7 +66,7 @@ kmeans_instruments <- function(bg_dat, value_column, kmax=15, nstart=50, iter.ma
 #'
 #' @export
 #' @return
-hclust_instruments <- function(bg_dat, value_column, kmax=50)
+hclust_instruments <- function(bg_dat, value_column, kmax=min(50, length(unique(bg_dat$SNP))))
 {
 	get_mse <- function(d, cuts)
 	{
@@ -88,14 +90,14 @@ hclust_instruments <- function(bg_dat, value_column, kmax=50)
 	cuts <- cutree(hc, k=1:50)
 	mse <- get_mse(d, cuts)
 	diff_mse <- diff(mse) * -1
-	which.max(diff_mse) + 2
-	dat <- dplyr::tibble(SNP = rownames(cuts), cluster = hc[[which.max(diff_mse) + 2]]$cluster)
+	clust <- which.max(diff_mse) + 2
+	dat <- dplyr::tibble(SNP = rownames(cuts), cluster = cuts[,clust])
 	return(dat)
 }
 
-#' Cluster
+#' Cluster instruments using the pvclust method
 #'
-#' <full description>
+#' Hierarchical clustering model
 #'
 #' @param bg_dat <what param does>
 #' @param value_column <what param does>
@@ -116,5 +118,95 @@ pvclust_instruments <- function(bg_dat, value_column, alpha=0.95, method.hclust=
 	plot(fit)
 	pvclust::pvrect(fit, alpha=alpha)
 }
+
+
+#' Cluster using partitioning around medoids
+#'
+#'
+#' @param bg_dat <what param does>
+#' @param value_column <what param does>
+#' @param kmax=50 <what param does>
+#' @param criterion="asw" <what param does>
+#'
+#' @export
+#' @return
+pam_instruments <- function(bg_dat, value_column, kmax=min(50, length(unique(bg_dat$SNP))), criterion="asw")
+{
+	wide <- bg_to_wide(bg_dat, value_column)
+	o <- fpc::pamk(wide, krange=1:kmax, criterion=criterion)$pamobject
+	dat <- dplyr::tibble(SNP = names(o$clustering), cluster=o$clustering)
+	return(dat)
+}
+
+
+
+#' MR in each cluster group
+#' 
+#' 
+#' @param bg Effects for the instruments on a set of variables, used to calculate index of suspicion, obtained using \code{make_background()}.
+#' @param dat Harmonised dataset of the exposure and the outcome, obtained using \code{TwoSampleMR::harmonise_data()}.
+#' @param method Choose the method to generate cluster. 
+#' \itemize{
+#'   \item kmean See ?\code{kmeans_instruments}
+#'   \item hclust See ?\code{hclust_instruments}
+#'   \item pv See ?\code{pvclust_instruments}
+#'   \item pam See ?\code{pam_instruments}
+#' }
+#' 
+#' @export
+#' @return 
+
+mr_cluster <- function(bg = bg_dat, dat = dat, method = c("kmean", "hclust", "pv", "pam")){
+  #generate cluster using selected method
+  if(method == "kmean"){
+    clust <- kmeans_instruments(bg, value_column = "rsq.outcome", kmax=min(15, length(unique(bg_dat$SNP))), nstart=50, iter.max=15)
+  }
+  
+  if(method == "hclust"){
+    clust <- hclust_instruments(bg, value_column = "rsq.outcome", kmax=min(50, length(unique(bg_dat$SNP))))
+  }
+  
+  if(method == "pv"){
+    clust <- pvclust_instruments(bg, value_column = "rsq.outcome", alpha=0.95, method.hclust="ward.D", method.dist="euclidean", nboot=200)
+  }
+  
+  if(method == "pam"){
+    clust <- pam_instruments(bg, value_column = "rsq.outcome", kmax=min(50, length(unique(bg_dat$SNP))), criterion="asw")
+  }
+  
+  # Add cluster info to the harmonised data
+  dat_clust <- merge(dat, clust, by = "SNP")
+  
+  # Perform mr within cluster
+  
+  mr_cluster_estimate <- function(dat = dat){
+    res_clust <- list()
+    for (i in 1:max(dat[ , ncol(dat)]))
+    {
+      temp <- subset(dat, dat[ , ncol(dat)] == i)  
+      if(nrow(temp) > 3)
+      {
+        res <- TwoSampleMR::mr(temp, method_list=c("mr_ivw_radial"))        
+      }
+      
+      if(nrow(temp) > 1 & nrow(temp) <3)
+      {
+        res <- TwoSampleMR::mr(temp, method_list=c("mr_ivw"))     
+      }
+      
+      if(nrow(temp) == 1)
+      {
+        res <- TwoSampleMR::mr(temp, method_list=c("mr_wald_ratio"))     
+      }
+      
+      res_clust[[i]] <- res
+    }
+    
+    return(res_clust)
+  }
+  
+  estimate <- mr_cluster_estimate(dat = dat_clust)
+  
+  }
 
 
