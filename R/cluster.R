@@ -139,7 +139,6 @@ pam_instruments <- function(bg_dat, value_column, kmax=min(50, length(unique(bg_
 }
 
 
-
 #' MR in each cluster group
 #' 
 #' 
@@ -208,5 +207,3 @@ mr_cluster <- function(bg = bg_dat, dat = dat, method = c("kmean", "hclust", "pv
   estimate <- mr_cluster_estimate(dat = dat_clust)
   
   }
-
-

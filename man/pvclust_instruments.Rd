@@ -2,7 +2,7 @@
 % Please edit documentation in R/cluster.R
 \name{pvclust_instruments}
 \alias{pvclust_instruments}
-\title{Cluster}
+\title{Cluster instruments using the pvclust method}
 \usage{
 pvclust_instruments(
   bg_dat,
@@ -30,5 +30,5 @@ pvclust_instruments(
 
 }
 \description{
-<full description>
+Hierarchical clustering model
 }

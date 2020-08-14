@@ -4,7 +4,11 @@
 \alias{hclust_instruments}
 \title{Cluster instruments using hclust}
 \usage{
-hclust_instruments(bg_dat, value_column, kmax = 50)
+hclust_instruments(
+  bg_dat,
+  value_column,
+  kmax = min(50, length(unique(bg_dat$SNP)))
+)
 }
 \arguments{
 \item{bg_dat}{<what param does>}

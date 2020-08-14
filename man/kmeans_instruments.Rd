@@ -4,7 +4,13 @@
 \alias{kmeans_instruments}
 \title{Cluster instruments using k-means}
 \usage{
-kmeans_instruments(bg_dat, value_column, kmax = 15, nstart = 50, iter.max = 15)
+kmeans_instruments(
+  bg_dat,
+  value_column,
+  kmax = min(15, length(unique(bg_dat$SNP))),
+  nstart = 50,
+  iter.max = 15
+)
 }
 \arguments{
 \item{bg_dat}{<what param does>}
