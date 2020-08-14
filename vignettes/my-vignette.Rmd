@@ -74,6 +74,11 @@ bg_dat2 <- make_background(exp = exp_dat, id_bg = id_bg2)
 ```
 
 
+```{r}
+# make harmonised dataset
+dat <- harmonise_data(exp_dat, out_dat)
+```
+
 For MR in each group of cluster for instruments:
 ```{r}
 #----------------------------------------------------------------------------------------------
@@ -82,21 +87,24 @@ For MR in each group of cluster for instruments:
 
 kmean <- mr_cluster(bg = bg_dat, dat = dat, method = c("kmean"))
 hclust <- mr_cluster(bg = bg_dat, dat = dat, method = c("hclust"))
-pv <- mr_cluster(bg = bg_dat, dat = dat, method = c("pv"))
+#pv <- mr_cluster(bg = bg_dat, dat = dat, method = c("pv"))
 pam <- mr_cluster(bg = bg_dat, dat = dat, method = c("pam"))
 
 ```
 
+Test if esimates from each cluster give substantially different results using Search Results Durbin–Wu–Hausman test
 
-Test if esimates from each cluster give substantially different results (e.g. durban wu houseman test)
 
+
+
+Calculate Q statistics of the model with clustering 
 ```{r}
-Q <- 0
-for(i in 1:max(dat[ , ncol(dat)]))
-{
-                bji <- res_clust[[i]]$betaWj
-                Q <- Q + sum(w * (bji - res_clust[[i]]$coef)^2)
-}
+
+Q <- mr_cluster_heterogeneity(dat = dat, cluster = kmean, weights = 3)
+
 ```
+
+
+
 
 - Identify the background traits related to each cluster
