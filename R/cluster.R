@@ -245,6 +245,8 @@ mr_cluster_heterogeneity <- function(dat = dat, cluster = NULL, weights = 3){
     Qj <- (W * ( bi - temp$beta)^2)
     Qsum <- sum(Qj)
     Q <- Q + Qsum
+    #Q_pval <- pchisq(Q, nrow(dat)-1, lower.tail = FALSE)
+    
   }
   
   return(Q)
