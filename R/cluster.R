@@ -117,6 +117,27 @@ pvclust_instruments <- function(bg_dat, value_column, alpha=0.95, method.hclust=
 	fit <- pvclust::pvclust(t(pc$x), method.hclust=method.hclust, method.dist=method.dist, nboot=nboot)
 	plot(fit)
 	pvclust::pvrect(fit, alpha=alpha)
+	#cluster <- pvclust::pvpick(fit, alpha = alpha)
+	get_mse <- function(d, cuts)
+	{
+	  dm <- as.matrix(d)
+	  mse <- sapply(1:ncol(cuts), function(j)
+	  {
+	    message(j)
+	    sapply(unique(cuts[,j]), function(i)
+	    {
+	      sn <- rownames(cuts)[cuts[,j] == i]
+	      sum(dm[rownames(dm) %in% sn, colnames(dm) %in% sn])
+	    }) %>% sum
+	  })
+	  return(mse)
+	}
+	cuts <- cutree(fit$hclust, k=1:50)
+	mse <- get_mse(dist(pc$x), cuts)
+	diff_mse <- diff(mse) * -1
+	clust <- which.max(diff_mse) + 2
+	dat <- dplyr::tibble(SNP = rownames(cuts), cluster = cuts[,clust])
+	return(dat)
 }
 
 
@@ -205,7 +226,7 @@ mr_cluster <- function(bg = bg_dat, dat = dat, method = c("kmean", "hclust", "pv
   }
   
   estimate <- mr_cluster_estimate(dat = dat_clust)
-  
+  return(estimate)
 }
 
 

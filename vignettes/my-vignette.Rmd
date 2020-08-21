@@ -87,7 +87,7 @@ For MR in each group of cluster for instruments:
 
 kmean <- mr_cluster(bg = bg_dat, dat = dat, method = c("kmean"))
 hclust <- mr_cluster(bg = bg_dat, dat = dat, method = c("hclust"))
-#pv <- mr_cluster(bg = bg_dat, dat = dat, method = c("pv"))
+pv <- mr_cluster(bg = bg_dat, dat = dat, method = c("pv"))
 pam <- mr_cluster(bg = bg_dat, dat = dat, method = c("pam"))
 
 ```
@@ -102,6 +102,7 @@ Calculate Q statistics of the model with clustering
 
 Q_kmean <- mr_cluster_heterogeneity(dat = dat, cluster = kmean, weights = 3)
 Q_hclust <- mr_cluster_heterogeneity(dat = dat, cluster = hclust, weights = 3)
+Q_pv <- mr_cluster_heterogeneity(dat = dat, cluster = pv, weights = 3)
 Q_pam <- mr_cluster_heterogeneity(dat = dat, cluster = pam, weights = 3)
 
 
