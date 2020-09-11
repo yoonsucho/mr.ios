@@ -177,6 +177,7 @@ pam_instruments <- function(bg_dat, value_column, kmax=min(50, length(unique(bg_
 #' @return 
 
 mr_cluster <- function(bg = bg_dat, dat = dat, method = c("kmean", "hclust", "pv", "pam")){
+  output <- list()
   #generate cluster using selected method
   if(method == "kmean"){
     clust <- kmeans_instruments(bg, value_column = "rsq.outcome", kmax=min(15, length(unique(bg_dat$SNP))), nstart=50, iter.max=15)
@@ -197,8 +198,10 @@ mr_cluster <- function(bg = bg_dat, dat = dat, method = c("kmean", "hclust", "pv
   # Add cluster info to the harmonised data
   dat_clust <- merge(dat, clust, by = "SNP")
   
-  # Perform mr within cluster
+  output$dat <- dat_clust
   
+  
+  # Perform mr within cluster
   mr_cluster_estimate <- function(dat = dat){
     res_clust <- list()
     for (i in 1:max(dat[ , ncol(dat)]))
@@ -225,15 +228,18 @@ mr_cluster <- function(bg = bg_dat, dat = dat, method = c("kmean", "hclust", "pv
     return(res_clust)
   }
   
-  estimate <- mr_cluster_estimate(dat = dat_clust)
-  return(estimate)
+  output$estimate <- mr_cluster_estimate(dat = dat_clust)
+  return(output)
 }
 
 
 # Heterogeneity
 
-mr_cluster_heterogeneity <- function(dat = dat, cluster = NULL, weights = 3){
+mr_cluster_heterogeneity <- function(cluster = NULL, weights = 3){
 
+  dat <- cluster$dat
+  estimate <- cluster$estimate
+  
   Q <- 0
 
   for (i in 1:max(dat[ , ncol(dat)]))
@@ -261,7 +267,7 @@ mr_cluster_heterogeneity <- function(dat = dat, cluster = NULL, weights = 3){
       W <-  ((temp$se.outcome^2+(IVW.Slope^2*temp$se.exposure^2))/temp$beta.exposure^2)^-1
     }
 
-    bi <- cluster[[i]]$b 
+    bi <- estimate[[i]]$b 
     
     Qj <- (W * ( bi - temp$beta)^2)
     Qsum <- sum(Qj)
@@ -274,6 +280,3 @@ mr_cluster_heterogeneity <- function(dat = dat, cluster = NULL, weights = 3){
   
   }
   
-
-  
-
