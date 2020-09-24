@@ -228,7 +228,7 @@ mr_cluster <- function(bg = bg_dat, dat = dat, method = c("kmean", "hclust", "pv
     return(res_clust)
   }
   
-  output$estimate <- mr_cluster_estimate(dat = dat_clust)
+  output$estimate <- mr_cluster_estimate(dat = output$dat)
   return(output)
 }
 
