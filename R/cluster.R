@@ -247,6 +247,11 @@ mr_cluster_heterogeneity <- function(cluster = NULL, weights = 3){
     temp <- subset(dat, dat[ , ncol(dat)] == i)  
     temp$beta <- temp$beta.outcome / temp$beta.exposure
     
+    if(nrow(temp) < 1){
+      Qsum = 0
+    }
+    
+    if(nrow(temp) > 1){
     #temp$w <- weight[match(temp$SNP, ios_dat$SNP)]
     
     if(weights == 1){
@@ -265,14 +270,14 @@ mr_cluster_heterogeneity <- function(cluster = NULL, weights = 3){
       EstimatesIVW<-summary(lm(IVW.Model))
       IVW.Slope<-EstimatesIVW$coefficients[1]
       W <-  ((temp$se.outcome^2+(IVW.Slope^2*temp$se.exposure^2))/temp$beta.exposure^2)^-1
-    }
-
     bi <- estimate[[i]]$b 
     
     Qj <- (W * ( bi - temp$beta)^2)
     Qsum <- sum(Qj)
     Q <- Q + Qsum
+    }
     #Q_pval <- pchisq(Q, nrow(dat)-1, lower.tail = FALSE)
+    }
     
   }
   
