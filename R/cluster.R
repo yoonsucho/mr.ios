@@ -82,12 +82,18 @@ hclust_instruments <- function(bg_dat, value_column, kmax=min(50, length(unique(
 		})
 		return(mse)
 	}
-
 	wide <- bg_to_wide(bg_dat, value_column)
 	pc <- prcomp(wide)
 	d <- dist(pc$x)
 	hc <- hclust(d)
-	cuts <- cutree(hc, k=1:50)
+	if (length(unique(bg_dat$SNP)) < 50)
+	  {
+	  cuts <- cutree(hc, k=1:kmax)
+	  }
+	if (length(unique(bg_dat$SNP)) >= 50)
+	  {
+	  cuts <- cutree(hc, k=1:50)
+	  }
 	mse <- get_mse(d, cuts)
 	diff_mse <- diff(mse) * -1
 	clust <- which.max(diff_mse) + 2
@@ -112,7 +118,8 @@ hclust_instruments <- function(bg_dat, value_column, kmax=min(50, length(unique(
 
 pvclust_instruments <- function(bg_dat, value_column, alpha=0.95, method.hclust="ward.D", method.dist="euclidean", nboot=200)
 {
-	wide <- bg_to_wide(bg_dat, value_column)
+  kmax=min(15, length(unique(bg_dat$SNP)))
+  wide <- bg_to_wide(bg_dat, value_column)
 	pc <- prcomp(wide)
 	fit <- pvclust::pvclust(t(pc$x), method.hclust=method.hclust, method.dist=method.dist, nboot=nboot)
 	plot(fit)
@@ -132,7 +139,14 @@ pvclust_instruments <- function(bg_dat, value_column, alpha=0.95, method.hclust=
 	  })
 	  return(mse)
 	}
-	cuts <- cutree(fit$hclust, k=1:50)
+	if (length(unique(bg_dat$SNP)) < 50)
+	{
+	  cuts <- cutree(fit$hclust, k=1:kmax)
+	}
+	if (length(unique(bg_dat$SNP)) >= 50)
+	{
+	  cuts <- cutree(fit$hclust, k=1:50)
+	}
 	mse <- get_mse(dist(pc$x), cuts)
 	diff_mse <- diff(mse) * -1
 	clust <- which.max(diff_mse) + 2
@@ -154,7 +168,7 @@ pvclust_instruments <- function(bg_dat, value_column, alpha=0.95, method.hclust=
 pam_instruments <- function(bg_dat, value_column, kmax=min(50, length(unique(bg_dat$SNP))), criterion="asw")
 {
 	wide <- bg_to_wide(bg_dat, value_column)
-	o <- fpc::pamk(wide, krange=1:kmax, criterion=criterion)$pamobject
+	o <- fpc::pamk(wide, krange=1:(kmax-1), criterion=criterion)$pamobject
 	dat <- dplyr::tibble(SNP = names(o$clustering), cluster=o$clustering)
 	return(dat)
 }
@@ -180,11 +194,11 @@ mr_cluster <- function(bg = bg_dat, dat = dat, method = c("kmean", "hclust", "pv
   output <- list()
   #generate cluster using selected method
   if(method == "kmean"){
-    clust <- kmeans_instruments(bg, value_column = "rsq.outcome", kmax=min(15, length(unique(bg_dat$SNP))), nstart=50, iter.max=15)
+    clust <- kmeans_instruments(bg, value_column = "rsq.outcome", kmax=min(15, length(unique(bg$SNP))), nstart=50, iter.max=15)
   }
   
   if(method == "hclust"){
-    clust <- hclust_instruments(bg, value_column = "rsq.outcome", kmax=min(50, length(unique(bg_dat$SNP))))
+    clust <- hclust_instruments(bg, value_column = "rsq.outcome", kmax=min(50, length(unique(bg$SNP))))
   }
   
   if(method == "pv"){
@@ -192,7 +206,7 @@ mr_cluster <- function(bg = bg_dat, dat = dat, method = c("kmean", "hclust", "pv
   }
   
   if(method == "pam"){
-    clust <- pam_instruments(bg, value_column = "rsq.outcome", kmax=min(50, length(unique(bg_dat$SNP))), criterion="asw")
+    clust <- pam_instruments(bg, value_column = "rsq.outcome", kmax=min(50, length(unique(bg$SNP))), criterion="asw")
   }
   
   # Add cluster info to the harmonised data
@@ -206,10 +220,43 @@ mr_cluster <- function(bg = bg_dat, dat = dat, method = c("kmean", "hclust", "pv
     res_clust <- list()
     for (i in 1:max(dat[ , ncol(dat)]))
     {
-      temp <- subset(dat, dat[ , ncol(dat)] == i)  
+      temp <- subset(dat, dat[ , ncol(dat)] == i) 
       if(nrow(temp) > 3)
       {
-        res <- TwoSampleMR::mr(temp, method_list=c("mr_ivw_radial"))        
+        Ratios <- temp$beta.outcome / temp$beta.exposure
+        W <- ((temp$beta.exposure^2) / (temp$se.outcome^2))
+        Wj <- sqrt(W)
+        BetaWj <- Ratios * Wj
+        IVW.Model <- lm(BetaWj~-1+Wj)
+        EstimatesIVW <- summary(lm(IVW.Model))
+        IVW.Slope <- EstimatesIVW$coefficients[1]
+        IVW.SE <- EstimatesIVW$coefficients[2]
+        IVW_CI<-confint(IVW.Model)
+        DF <- length(temp$SNP)-1
+        Qj <- W*(Ratios-IVW.Slope)^2
+        Total_Q <- sum(Qj)
+        Total_Q_chi <- pchisq(Total_Q,length(temp$beta.exposure)-1,lower.tail = FALSE)
+        W<- ((temp$se.outcome^2+(IVW.Slope^2*temp$se.exposure^2))/temp$beta.exposure^2)^-1
+        Wj<-sqrt(W)
+        BetaWj<-Ratios*Wj
+        IVW.Model<-lm(BetaWj~-1+Wj)
+        EstimatesIVW<-summary(lm(BetaWj~-1+Wj))
+        IVW.Slope<-EstimatesIVW$coefficients[1]
+        IVW.SE<-EstimatesIVW$coefficients[2]
+        IVW_CI<-confint(IVW.Model)
+        Qj<-W*(Ratios-IVW.Slope)^2
+        Total_Q<-sum(Qj)
+        Total_Q_chi<-pchisq(Total_Q,length(temp$beta.exposure)-1,lower.tail = FALSE)
+        b <- EstimatesIVW$coefficients[1,1]
+        se <- EstimatesIVW$coefficients[1,2]
+        pval <- 2 * pnorm(abs(b/se), lower.tail = FALSE)
+        Q_df <- DF
+        Q <- Total_Q
+        Q_pval <- pchisq(Q, Q_df, lower.tail=F)
+        nsnp <- nrow(temp)
+        res <- data.frame(id.exposure = temp$id.exposure[1], id.outcome = temp$id.outcome[1], outcome = temp$outcome[1],  
+                          method = c("Radial MR"), nsnp = nsnp, 
+                          b = b, se = se, pval = Q_pval)   
       }
       
       if(nrow(temp) > 1 & nrow(temp) <3)
