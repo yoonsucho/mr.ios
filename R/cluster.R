@@ -221,7 +221,7 @@ mr_cluster <- function(bg = bg_dat, dat = dat, method = c("kmean", "hclust", "pv
     for (i in 1:max(dat[ , ncol(dat)]))
     {
       temp <- subset(dat, dat[ , ncol(dat)] == i) 
-      if(nrow(temp) > 3)
+      if(nrow(temp) >= 3)
       {
         Ratios <- temp$beta.outcome / temp$beta.exposure
         W <- ((temp$beta.exposure^2) / (temp$se.outcome^2))
@@ -282,7 +282,7 @@ mr_cluster <- function(bg = bg_dat, dat = dat, method = c("kmean", "hclust", "pv
 
 # Heterogeneity
 
-mr_cluster_heterogeneity <- function(cluster = NULL, weights = 3){
+mr_cluster_heterogeneity <- function(cluster = NULL){
 
   dat <- cluster$dat
   estimate <- cluster$estimate
@@ -300,16 +300,7 @@ mr_cluster_heterogeneity <- function(cluster = NULL, weights = 3){
     
     if(nrow(temp) > 1){
     #temp$w <- weight[match(temp$SNP, ios_dat$SNP)]
-    
-    if(weights == 1){
-      W <- ((temp$beta.exposure^2) / (temp$se.outcome^2))
-    }
-    
-    if(weights == 2){
-      W<-((temp$se.outcome^2/temp$beta.exposure^2)+((temp$beta.outcome^2*temp$se.exposure^2)/temp$beta.exposure^4))^-1
-    }
-    
-    if(weights==3){
+      
       W <- ((temp$beta.exposure^2) / (temp$se.outcome^2))
       Wj<-sqrt(W)
       BetaWj<- (temp$beta.outcome/temp$beta.exposure)*Wj
@@ -317,12 +308,13 @@ mr_cluster_heterogeneity <- function(cluster = NULL, weights = 3){
       EstimatesIVW<-summary(lm(IVW.Model))
       IVW.Slope<-EstimatesIVW$coefficients[1]
       W <-  ((temp$se.outcome^2+(IVW.Slope^2*temp$se.exposure^2))/temp$beta.exposure^2)^-1
+      
     bi <- estimate[[i]]$b 
     
     Qj <- (W * ( bi - temp$beta)^2)
     Qsum <- sum(Qj)
     Q <- Q + Qsum
-    }
+    
     #Q_pval <- pchisq(Q, nrow(dat)-1, lower.tail = FALSE)
     }
     

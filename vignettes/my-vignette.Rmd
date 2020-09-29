@@ -100,10 +100,10 @@ Test if esimates from each cluster give substantially different results using Se
 Calculate Q statistics of the model with clustering 
 ```{r}
 
-Q_kmean <- mr_cluster_heterogeneity(cluster = kmean, weights = 3)
-Q_hclust <- mr_cluster_heterogeneity(cluster = hclust, weights = 3)
-Q_pv <- mr_cluster_heterogeneity(cluster = pv, weights = 3)
-Q_pam <- mr_cluster_heterogeneity(cluster = pam, weights = 3)
+Q_kmean <- mr_cluster_heterogeneity(cluster = kmean)
+Q_hclust <- mr_cluster_heterogeneity(cluster = hclust)
+Q_pv <- mr_cluster_heterogeneity(cluster = pv)
+Q_pam <- mr_cluster_heterogeneity(cluster = pam)
 
 
 ```
