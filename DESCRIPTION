@@ -21,7 +21,9 @@ Suggests:
     rmarkdown,
     tidyr,
     glmnet,
-    ggrepel
+    ggrepel,
+    tydiverse,
+    meta
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
