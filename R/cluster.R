@@ -97,6 +97,10 @@ hclust_instruments <- function(bg_dat, value_column, kmax=min(50, length(unique(
 	mse <- get_mse(d, cuts)
 	diff_mse <- diff(mse) * -1
 	clust <- which.max(diff_mse) + 2
+	if (clust > 48) {
+	  clust <- 50
+	  message("Number of clusters generated is more than 50; Adjusted to 50")
+	}
 	dat <- dplyr::tibble(SNP = rownames(cuts), cluster = cuts[,clust])
 	return(dat)
 }

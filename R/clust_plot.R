@@ -11,10 +11,13 @@
 
 permutation_plot <- function(simulation = NULL, Q_radial = NULL, Q_mrios = NULL)
 {
-  p <- plot(density(sim_30$value), main="Distribution of Q statistics (20 clusters)")
+  sim <- simulation %>% 
+    purrr::map_df(dplyr::as_tibble)
   
-  abline(v = Q_radial, col = "red", lwd = 3)
-  abline(v = Q_mrios, col = "blue", lwd = 3)
+  p <- plot(density(sim$value), main="Distribution of Q statistics")
+  
+  abline(v = Q_radial, col = "red", lwd = 1)
+  abline(v = Q_mrios, col = "blue", lwd = 1)
 
   return(p)
   
