@@ -11,7 +11,11 @@
 
 permutation_plot <- function(simulation = NULL, Q_radial = NULL, Q_mrios = NULL)
 {
-  sim <- simulation %>% 
+  t <- list()
+  for (i in 1:length(simulation)){
+    t[i] <- simulation[[i]][2]
+  }
+    sim <- t %>% 
     purrr::map_df(dplyr::as_tibble)
   
   p <- plot(density(sim$value), main="Distribution of Q statistics")
