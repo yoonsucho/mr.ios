@@ -217,9 +217,20 @@ mr_cluster <- function(bg = bg_dat, dat = dat, method = c("kmean", "hclust", "pv
   dat_clust <- merge(dat, clust, by = "SNP")
   
   output$dat <- dat_clust
+  output$estimate <- mr_cluster_estimate(dat = output$dat)
+  
+  return(output)
+}
   
   
-  # Perform mr within cluster
+#' Perform MR 
+#' Perform MR based on the number of SNPs in the dataset
+#' 
+#' @param dat data
+#' 
+#' @export
+#' @return dataframe
+
   mr_cluster_estimate <- function(dat = dat){
     res_clust <- list()
     for (i in 1:max(dat[ , ncol(dat)]))
@@ -279,12 +290,15 @@ mr_cluster <- function(bg = bg_dat, dat = dat, method = c("kmean", "hclust", "pv
     return(res_clust)
   }
   
-  output$estimate <- mr_cluster_estimate(dat = output$dat)
-  return(output)
-}
 
 
-# Heterogeneity
+
+#' Calculate heterogeneity
+#' Calculate heterogeneity summing Q statstics from each cluster
+#' 
+#' @param cluster MR estimates from \code{mr_cluster}
+#' 
+#' @export
 
 mr_cluster_heterogeneity <- function(cluster = NULL){
 
