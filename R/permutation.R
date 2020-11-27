@@ -3,10 +3,11 @@
 #' @export
 #' @return Simulation result in data frame
 
-perm_sim <- function(dat = dat, bg = bg_dat){
+perm_sim <- function(dat = dat, bg = bg_dat, num_test = 1000){
 sim <- list()
-
-invisible(capture.output(sim <- lapply(1:1000, function(x) {
+invisible(capture.output(sim <- lapply(1:num_test, function(x) {
+  tryCatch(
+    {
   dat <- dat
   bg_dat_temp <-transform(bg_dat, rsq.outcome = sample(rsq.outcome))
   clust <- hclust_instruments(bg_dat_temp, value_column = "rsq.outcome", kmax=min(50, length(unique(bg_dat_temp$SNP))))
@@ -18,7 +19,13 @@ invisible(capture.output(sim <- lapply(1:1000, function(x) {
   l$dat <- clust
   l$Q <- mr_cluster_heterogeneity(cluster = hclust)
   return(l)
+  },
+  error = function(error){
+    l$dat <- NULL
+  return(l)
   }
+  )
+}
 ))
 )
 }
