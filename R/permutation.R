@@ -21,8 +21,7 @@ invisible(capture.output(sim <- lapply(1:num_test, function(x) {
   return(l)
   },
   error = function(error){
-    l$dat <- NULL
-  return(l)
+  return(NULL)
   }
   )
 }

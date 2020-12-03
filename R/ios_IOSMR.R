@@ -30,6 +30,28 @@ ios <- function(exp=exp_dat, bg=bg_dat){
       ios2_max = max(r2_ratio, na.rm=TRUE)
     )
   
+  ##ios-pca
+  wide <- bg_to_wide(bg, "rsq.outcome")
+  pc <- prcomp(wide)
+  pcs <- as.data.frame(pc$x)
+  pcs <- tibble::rownames_to_column(pcs, var = "SNP")
+  r <- bg %>%
+    dplyr::select(SNP, rsq.exposure) %>%
+    dplyr::group_by(SNP) %>%
+    dplyr::distinct(SNP, rsq.exposure)
+  #Regress out rsq.outcome from each PCs
+  for (i in 1:(ncol(pcs)-1)){
+    j = i+1
+    d <- cbind(pcs[ , j], r[ ,2])
+    pcs[, j] <- residuals(lm(d[ ,1] ~ rsq.exposure, dat = d))
+  }
+  
+  ios_pca <- pcs %>%
+    mutate(ios_pca = rowMeans(pcs[,-1])^2) %>%
+    dplyr::select(SNP, ios_pca)
+  
+  ios <- merge(ios, ios_pca, by = "SNP")
+  
   # Reshape IOS
   #temp <- stats::reshape(ios, timevar="variable", idvar="SNP", direction="wide")
   #names(temp)[-1] <- as.character(unique(ios$variable))

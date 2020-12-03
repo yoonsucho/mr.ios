@@ -159,13 +159,12 @@ make_background <- function(exp = exp_dat, id_bg = id_bg) {
   
   #-----------------------------------------------------------------------------------------------------
   #Merge two datasets - exposure data and background data
+  ##ios1
   bdat <- merge(bdat, subset(exp, select=c(SNP, rsq.exposure), by="SNP"))
+  ##ios2
   bdat$r2_ratio <- bdat$rsq.outcome / bdat$rsq.exposure
-  
-  bdat <- subset(bdat, !duplicated(subset(bdat, select=c(SNP, id.outcome))))
-
+  bdat <- subset(wide, !duplicated(subset(bdat, select=c(SNP, id.outcome))))
   return(bdat)
-  
 }
 
 
